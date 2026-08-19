@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sangathan Contact Directory — Search, filter, and explore Jan Suraaj organization contacts across Bihar with advanced analytics.">
+  <title>Sangathan Search | Contact Directory</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ═══════════ LOADER ═══════════ -->
+  <div class="loader-overlay" id="loader">
+    <div class="loader-content">
+      <div class="loader-spinner"></div>
+      <div class="loader-text">Loading Sangathan Data</div>
+      <div class="loader-sub">Fetching live records from Google Sheets…</div>
+    </div>
+  </div>
+
+  <!-- ═══════════ HEADER ═══════════ -->
+  <header class="app-header">
+    <div class="header-inner">
+      <a class="logo" href="#">
+        <div class="logo-icon">JS</div>
+        <div>
+          <div class="logo-text">Sangathan Search</div>
+          <div class="logo-sub">Contact Directory</div>
+        </div>
+      </a>
+      <nav class="header-nav">
+        <button class="nav-btn active" data-tab="directory" id="nav-directory">📋 Directory</button>
+        <button class="nav-btn" data-tab="analytics" id="nav-analytics">📊 Analytics</button>
+        <button class="nav-btn" data-tab="duplicates" id="nav-duplicates">⚠️ Duplicates</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ═══════════ STAT CARDS ═══════════ -->
+  <section class="stats-row" id="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon purple">👥</div>
+      <div>
+        <div class="stat-value" id="stat-total">—</div>
+        <div class="stat-label">Total Contacts</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon pink">🗺️</div>
+      <div>
+        <div class="stat-value" id="stat-districts">—</div>
+        <div class="stat-label">Districts</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green">🏛️</div>
+      <div>
+        <div class="stat-value" id="stat-blocks">—</div>
+        <div class="stat-label">Blocks</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon amber">🏷️</div>
+      <div>
+        <div class="stat-value" id="stat-designations">—</div>
+        <div class="stat-label">Designations</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon red">👩</div>
+      <div>
+        <div class="stat-value" id="stat-female">—</div>
+        <div class="stat-label">Female Leaders</div>
+      </div>
+    </div>
+    <div class="stat-card" id="stat-card-duplicates" style="cursor: pointer; border-color: rgba(239, 68, 68, 0.3);">
+      <div class="stat-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">⚠️</div>
+      <div>
+        <div class="stat-value" id="stat-duplicates" style="color: #ef4444;">0</div>
+        <div class="stat-label">Duplicates Found</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ MAIN CONTENT ═══════════ -->
+  <main class="main-content">
+
+    <!-- ──── DIRECTORY TAB ──── -->
+    <div class="tab-panel active" id="panel-directory">
+
+      <!-- Search & Filter Toggle -->
+      <div class="search-filters-bar">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Type anything — name, number, district, caste, even a single letter…" autocomplete="off">
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="filter-toggle-btn" id="bulk-search-toggle" style="background: var(--bg-glass); border-color: var(--primary-500); color: var(--primary-400);">
+            <span>📋</span> Bulk
+          </button>
+          <button class="filter-toggle-btn" id="filter-toggle">
+            <span>⚙️</span> Filters
+          </button>
+        </div>
+      </div>
+
+      <!-- Search-In Field Selector -->
+      <div class="search-field-selector" id="search-field-selector">
+        <span class="search-field-label">Search in:</span>
+        <button class="search-chip active" data-field="all">🔎 All Fields</button>
+        <button class="search-chip" data-field="Name">👤 Name</button>
+        <button class="search-chip" data-field="Contact No.">📞 Contact No.</button>
+        <button class="search-chip" data-field="District">🗺️ District</button>
+        <button class="search-chip" data-field="Block">🏛️ Block</button>
+        <button class="search-chip" data-field="Panchayat">📍 Panchayat</button>
+        <button class="search-chip" data-field="Category">🏷️ Category</button>
+        <button class="search-chip" data-field="Caste">🪪 Caste</button>
+        <button class="search-chip" data-field="Gender">⚧️ Gender</button>
+        <button class="search-chip" data-field="Current JS Designation Final">🎖️ Designation</button>
+        <button class="search-chip" data-field="Father/Husband's Name">👨‍👧 Father/Husband</button>
+        <button class="search-chip" data-field="Profile">📄 Profile</button>
+        <button class="search-chip" data-field="Anumandal">🏘️ Anumandal</button>
+      </div>
+
+      <!-- Filter Panel -->
+      <div class="filters-panel" id="filters-panel">
+        <div class="filters-grid">
+          <div class="filter-group">
+            <label for="filter-district">District</label>
+            <select id="filter-district"><option value="">All Districts</option></select>
+          </div>
+          <div class="filter-group">
+            <label for="filter-block">Block</label>
+            <select id="filter-block"><option value="">All Blocks</option></select>
+          </div>
+          <div class="filter-group">
+            <label for="filter-category">Category</label>
+            <select id="filter-category"><option value="">All Categories</option></select>
+          </div>
+          <div class="filter-group">
+            <label for="filter-caste">Caste</label>
+            <select id="filter-caste"><option value="">All Castes</option></select>
+          </div>
+          <div class="filter-group">
+            <label for="filter-gender">Gender</label>
+            <select id="filter-gender">
+              <option value="">All Genders</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="filter-designation">Designation</label>
+            <select id="filter-designation"><option value="">All Designations</option></select>
+          </div>
+          <div class="filter-group">
+            <label for="filter-status">Current Status</label>
+            <select id="filter-status"><option value="">All Statuses</option></select>
+          </div>
+          <div class="filter-group">
+            <label for="filter-anumandal">Anumandal</label>
+            <select id="filter-anumandal"><option value="">All Anumandal</option></select>
+          </div>
+        </div>
+        <div class="filter-actions">
+          <button class="btn btn-ghost" id="clear-filters">Clear All</button>
+          <button class="btn btn-primary" id="apply-filters">Apply Filters</button>
+        </div>
+      </div>
+
+      <!-- Active Filter Badges -->
+      <div class="active-filters" id="active-filters"></div>
+
+      <!-- Results header -->
+      <div class="results-header">
+        <div class="results-count" id="results-count">Loading…</div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <select class="per-page-select" id="per-page-select">
+            <option value="25">25 / page</option>
+            <option value="50" selected>50 / page</option>
+            <option value="100">100 / page</option>
+            <option value="200">200 / page</option>
+          </select>
+          <div class="export-group">
+            <button class="export-btn" id="export-csv">📄 CSV</button>
+            <button class="export-btn" id="export-excel">📗 Excel</button>
+            <button class="export-btn" id="export-pdf">📕 PDF</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <div class="table-scroll">
+          <table id="contacts-table">
+            <thead>
+              <tr>
+                <th data-col="Name">Name <span class="sort-arrow">▲</span></th>
+                <th data-col="District">District <span class="sort-arrow">▲</span></th>
+                <th data-col="Block">Block <span class="sort-arrow">▲</span></th>
+                <th data-col="Contact No.">Contact <span class="sort-arrow">▲</span></th>
+                <th data-col="Age">Age <span class="sort-arrow">▲</span></th>
+                <th data-col="Category">Category <span class="sort-arrow">▲</span></th>
+                <th data-col="Gender">Gender <span class="sort-arrow">▲</span></th>
+                <th data-col="Current JS Designation Final">Designation <span class="sort-arrow">▲</span></th>
+              </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </div>
+
+    <!-- ──── DUPLICATES TAB ──── -->
+    <div class="tab-panel" id="panel-duplicates">
+      <div class="controls-bar">
+        <div class="results-count" id="duplicates-count">Found 0 duplicates</div>
+        <div class="export-actions">
+          <button class="export-btn" id="export-dup-csv"><span>CSV</span></button>
+          <button class="export-btn" id="export-dup-xlsx"><span>Excel</span></button>
+        </div>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Contact No.</th>
+              <th>District</th>
+              <th>Block</th>
+              <th>Designation</th>
+              <th>Category</th>
+            </tr>
+          </thead>
+          <tbody id="duplicates-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ──── ANALYTICS TAB ──── -->
+    <div class="tab-panel" id="panel-analytics">
+      <div class="charts-grid">
+        <div class="chart-card full-width">
+          <h3>📍 Contacts by District (Top 20)</h3>
+          <canvas id="chart-districts"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>🏷️ Category Distribution</h3>
+          <canvas id="chart-categories"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>👤 Gender Split</h3>
+          <canvas id="chart-gender"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>🎖️ Top Designations</h3>
+          <canvas id="chart-designations"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>📊 Age Distribution</h3>
+          <canvas id="chart-age"></canvas>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ═══════════ DETAIL MODAL ═══════════ -->
+  <div class="modal-overlay" id="detail-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="modal-name"></div>
+          <div class="modal-subtitle" id="modal-subtitle"></div>
+        </div>
+        <button class="modal-close" id="modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="detail-grid" id="modal-details"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ BULK SEARCH MODAL ═══════════ -->
+  <div class="modal-overlay" id="bulk-modal">
+    <div class="modal" style="max-width: 600px;">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">Bulk Search</div>
+          <div class="modal-subtitle">Paste a list of names or numbers to search them all at once.</div>
+        </div>
+        <button class="modal-close" id="bulk-modal-close">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 24px;">
+        <label for="bulk-search-text" style="display: block; margin-bottom: 8px; color: var(--text-secondary); font-size: 0.875rem;">
+          Paste values (separated by commas or newlines):
+        </label>
+        <textarea id="bulk-search-text" rows="8" style="width: 100%; background: var(--bg-deep); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 12px; color: var(--text-primary); font-family: inherit; resize: vertical; margin-bottom: 16px;" placeholder="e.g.&#10;9876543210&#10;8765432109&#10;Zubair Alam"></textarea>
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+          <button id="bulk-search-clear" style="padding: 10px 16px; border: 1px solid var(--border-default); background: transparent; color: var(--text-secondary); border-radius: var(--radius-sm); cursor: pointer;">Clear</button>
+          <button id="bulk-search-apply" style="padding: 10px 24px; background: var(--primary-500); color: white; border: none; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);">Search</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ TOASTS ═══════════ -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- CDN libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
