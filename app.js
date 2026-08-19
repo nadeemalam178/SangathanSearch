@@ -176,7 +176,16 @@
       totalRawRows = allData.length;
       
       for (const row of allData) {
-        const key = `${row['Contact No.']}_${row['Name']}`.toLowerCase();
+        const contact = (row['Contact No.'] || '').trim();
+        const name = (row['Name'] || '').trim();
+        
+        // Don't treat completely blank rows as duplicates of each other
+        if (!contact && !name) {
+          deduped.push(row);
+          continue;
+        }
+        
+        const key = `${contact}_${name}`.toLowerCase();
         if (!seen.has(key)) {
           seen.set(key, [row]);
         } else {
@@ -187,7 +196,8 @@
       for (const [key, rows] of seen.entries()) {
         deduped.push(rows[0]);
         if (rows.length > 1) {
-          duplicatesData.push(...rows); // Push all copies of this duplicated entry
+          // Use concat instead of push(...rows) to avoid "Maximum call stack size exceeded" on very large arrays
+          duplicatesData = duplicatesData.concat(rows);
         }
       }
       
