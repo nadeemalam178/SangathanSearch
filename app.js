@@ -50,6 +50,8 @@
   const panelAnalytics  = $('#panel-analytics');
   const panelDuplicates = $('#panel-duplicates');
   const duplicatesBody  = $('#duplicates-body');
+  
+  let totalRawRows = 0;
 
   // ─── CSV PARSER ───────────────────────────────────
   function parseCSV(text) {
@@ -171,6 +173,7 @@
       const seen = new Map();
       const deduped = [];
       duplicatesData = [];
+      totalRawRows = allData.length;
       
       for (const row of allData) {
         const key = `${row['Contact No.']}_${row['Name']}`.toLowerCase();
@@ -248,7 +251,6 @@
     $('#stat-female').textContent = data.filter(d => d['Gender'] && d['Gender'].toLowerCase() === 'female').length;
     
     // Update duplicates stat
-    const dupCount = Math.floor(duplicatesData.length / 2); // Roughly pairs
     $('#stat-duplicates').textContent = duplicatesData.length > 0 ? duplicatesData.length.toLocaleString() : '0';
   }
 
@@ -437,8 +439,8 @@
               <p>Try adjusting your search or filters</p>
             </div>
           </td>
-        </tr>`;
-      pagination.innerHTML = '';
+        </tr>
+      `;pagination.innerHTML = '';
       return;
     }
 
