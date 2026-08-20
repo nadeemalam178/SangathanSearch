@@ -49,6 +49,7 @@
       <nav class="header-nav">
         <button class="nav-btn active" data-tab="directory" id="nav-directory">📋 Directory</button>
         <button class="nav-btn" data-tab="analytics" id="nav-analytics">📊 Analytics</button>
+        <button class="nav-btn" data-tab="quality" id="nav-quality">🩺 Data Quality</button>
       </nav>
     </div>
   </header>
@@ -226,6 +227,65 @@
     </div>
 
 
+
+    <!-- ──── DATA QUALITY TAB ──── -->
+    <div class="tab-panel" id="panel-quality">
+
+      <!-- Summary bar -->
+      <div class="dq-summary" id="dq-summary">
+        <div class="dq-summary-item">
+          <div class="dq-summary-value" id="dq-total">—</div>
+          <div class="dq-summary-label">Total Records</div>
+        </div>
+        <div class="dq-summary-item">
+          <div class="dq-summary-value good" id="dq-complete">—</div>
+          <div class="dq-summary-label">Fully Complete</div>
+        </div>
+        <div class="dq-summary-item">
+          <div class="dq-summary-value warn" id="dq-partial">—</div>
+          <div class="dq-summary-label">Partial (missing ≥1 key field)</div>
+        </div>
+        <div class="dq-summary-item">
+          <div class="dq-summary-value bad" id="dq-missing-contact">—</div>
+          <div class="dq-summary-label">Missing Contact No.</div>
+        </div>
+        <div class="dq-summary-item">
+          <div class="dq-summary-value bad" id="dq-missing-gender">—</div>
+          <div class="dq-summary-label">Missing Gender</div>
+        </div>
+      </div>
+
+      <!-- Field completeness cards -->
+      <div class="dq-section-title">📋 Field Completeness</div>
+      <div class="dq-fields-grid" id="dq-fields-grid"></div>
+
+      <!-- Missing records browser -->
+      <div class="dq-section-title" style="margin-top:2rem;">
+        🔍 Browse Incomplete Records
+        <div class="dq-filter-chips" id="dq-filter-chips"></div>
+      </div>
+      <div class="dq-missing-count" id="dq-missing-count"></div>
+      <div class="table-wrapper" style="margin-top:0.75rem;">
+        <div class="table-scroll">
+          <table id="dq-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>District</th>
+                <th>Block</th>
+                <th>Contact No.</th>
+                <th>Gender</th>
+                <th>Category</th>
+                <th>Age</th>
+                <th>Designation</th>
+              </tr>
+            </thead>
+            <tbody id="dq-table-body"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="dq-pagination"></div>
+      </div>
+    </div>
 
     <!-- ──── ANALYTICS TAB ──── -->
     <div class="tab-panel" id="panel-analytics">

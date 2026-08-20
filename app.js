@@ -948,8 +948,183 @@
     }, 3500);
   }
 
+
+  // ─── DATA QUALITY ─────────────────────────────────
+  const DQ_KEY_FIELDS = [
+    { key: 'Name',                         label: 'Name',           icon: '👤' },
+    { key: 'Contact No.',                  label: 'Contact No.',    icon: '📞' },
+    { key: 'Gender',                       label: 'Gender',         icon: '⚧️' },
+    { key: 'District',                     label: 'District',       icon: '🗺️' },
+    { key: 'Block',                        label: 'Block',          icon: '🏛️' },
+    { key: 'Category',                     label: 'Category',       icon: '🏷️' },
+    { key: 'Caste',                        label: 'Caste',          icon: '🪪' },
+    { key: 'Age',                          label: 'Age',            icon: '📅' },
+    { key: 'Current JS Designation Final', label: 'Designation',    icon: '🎖️' },
+    { key: 'Panchayat',                    label: 'Panchayat',      icon: '📍' },
+    { key: 'Anumandal',                    label: 'Anumandal',      icon: '🏘️' },
+    { key: 'Profile',                      label: 'Profile',        icon: '📄' },
+    { key: 'Calling Status',               label: 'Calling Status', icon: '📱' },
+    { key: 'Current  Status',              label: 'Current Status', icon: '✅' },
+  ];
+
+  let dqFilterField = null;
+  let dqPage        = 1;
+  const DQ_PER_PAGE = 50;
+  let dqFiltered    = [];
+  let dqRendered    = false;
+
+  function renderDataQuality() {
+    const data  = allData;
+    const total = data.length;
+    if (!total) return;
+
+    // ─ Summary bar ─────────────────────────────────
+    const CORE = ['Name','Contact No.','Gender','District','Block','Category'];
+    let completeCount = 0;
+    for (const row of data) {
+      if (CORE.every(k => (row[k] || '').trim())) completeCount++;
+    }
+    const missingContact = data.filter(r => !(r['Contact No.'] || '').trim()).length;
+    const missingGender  = data.filter(r => !(r['Gender']      || '').trim()).length;
+
+    $('#dq-total').textContent           = total.toLocaleString();
+    $('#dq-complete').textContent        = completeCount.toLocaleString();
+    $('#dq-partial').textContent         = (total - completeCount).toLocaleString();
+    $('#dq-missing-contact').textContent = missingContact.toLocaleString();
+    $('#dq-missing-gender').textContent  = missingGender.toLocaleString();
+
+    // ─ Field completeness cards ────────────────────
+    const grid = $('#dq-fields-grid');
+    grid.innerHTML = DQ_KEY_FIELDS.map(field => {
+      const filled  = data.filter(r => (r[field.key] || '').trim()).length;
+      const missing = total - filled;
+      const pct     = (filled / total * 100).toFixed(1);
+      const cls     = pct >= 90 ? 'dq-good' : pct >= 60 ? 'dq-warn' : 'dq-bad';
+      return `
+        <div class="dq-field-card" data-field="${field.key}">
+          <div class="dq-field-header">
+            <span class="dq-field-icon">${field.icon}</span>
+            <span class="dq-field-name">${field.label}</span>
+            <span class="dq-field-pct ${cls}">${pct}%</span>
+          </div>
+          <div class="dq-bar-track">
+            <div class="dq-bar-fill ${cls}" style="width:${pct}%"></div>
+          </div>
+          <div class="dq-field-stats">
+            <span class="dq-stat-filled">✓ ${filled.toLocaleString()}</span>
+            <span class="dq-stat-missing ${missing > 0 ? 'has-missing' : ''}">
+              ${missing > 0 ? '⚠ ' + missing.toLocaleString() + ' missing' : '✓ complete'}
+            </span>
+          </div>
+        </div>`;
+    }).join('');
+
+    // Card click → filter browser
+    $$('#dq-fields-grid .dq-field-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const f = card.dataset.field;
+        dqFilterField = dqFilterField === f ? null : f;
+        $$('#dq-fields-grid .dq-field-card').forEach(c => c.classList.remove('dq-selected'));
+        $$('#dq-filter-chips .dq-chip').forEach(c => c.classList.remove('active'));
+        if (dqFilterField) {
+          card.classList.add('dq-selected');
+          const chip = $(`#dq-filter-chips [data-field="${dqFilterField}"]`);
+          if (chip) chip.classList.add('active');
+        }
+        dqPage = 1;
+        renderDQBrowser();
+      });
+    });
+
+    // ─ Filter chips ────────────────────────────────
+    const chipsEl = $('#dq-filter-chips');
+    chipsEl.innerHTML = DQ_KEY_FIELDS.map(f => {
+      const missing = data.filter(r => !(r[f.key] || '').trim()).length;
+      if (missing === 0) return '';
+      return `<button class="dq-chip" data-field="${f.key}">${f.icon} ${f.label} <span>${missing.toLocaleString()}</span></button>`;
+    }).join('');
+
+    $$('#dq-filter-chips .dq-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const f = chip.dataset.field;
+        dqFilterField = dqFilterField === f ? null : f;
+        $$('#dq-filter-chips .dq-chip').forEach(c => c.classList.remove('active'));
+        $$('#dq-fields-grid .dq-field-card').forEach(c => c.classList.remove('dq-selected'));
+        if (dqFilterField) {
+          chip.classList.add('active');
+          const card = $(`#dq-fields-grid [data-field="${dqFilterField}"]`);
+          if (card) card.classList.add('dq-selected');
+        }
+        dqPage = 1;
+        renderDQBrowser();
+      });
+    });
+
+    dqRendered = true;
+    renderDQBrowser();
+  }
+
+  function renderDQBrowser() {
+    const data = allData;
+    const CORE = ['Contact No.','Gender','District','Block','Category'];
+
+    dqFiltered = dqFilterField
+      ? data.filter(r => !(r[dqFilterField] || '').trim())
+      : data.filter(r => CORE.some(k => !(r[k] || '').trim()));
+
+    const label = dqFilterField
+      ? `missing <strong>${DQ_KEY_FIELDS.find(f => f.key === dqFilterField)?.label || dqFilterField}</strong>`
+      : 'missing at least one key field';
+    $('#dq-missing-count').innerHTML =
+      `<strong>${dqFiltered.length.toLocaleString()}</strong> records — ${label}`;
+
+    const start    = (dqPage - 1) * DQ_PER_PAGE;
+    const pageData = dqFiltered.slice(start, start + DQ_PER_PAGE);
+    const tbody    = $('#dq-table-body');
+
+    if (pageData.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:3rem;color:var(--text-muted);">No incomplete records 🎉</td></tr>`;
+      $('#dq-pagination').innerHTML = '';
+      return;
+    }
+
+    tbody.innerHTML = pageData.map(row => {
+      const c = (key) => {
+        const v = (row[key] || '').trim();
+        return `<td class="${!v ? 'dq-cell-missing' : ''}">${v ? esc(v) : '— missing'}</td>`;
+      };
+      return `<tr>
+        <td class="cell-name">${esc(row['Name'])}</td>
+        ${c('District')}${c('Block')}${c('Contact No.')}
+        ${c('Gender')}${c('Category')}${c('Age')}
+        ${c('Current JS Designation Final')}
+      </tr>`;
+    }).join('');
+
+    // Pagination
+    const totalPages = Math.ceil(dqFiltered.length / DQ_PER_PAGE);
+    const pgEl = $('#dq-pagination');
+    if (totalPages <= 1) { pgEl.innerHTML = ''; return; }
+    const parts = [`<button class="page-btn" ${dqPage===1?'disabled':''} data-dq-page="${dqPage-1}">◀</button>`];
+    for (const p of getPageRange(dqPage, totalPages)) {
+      parts.push(p==='...' ? `<span class="page-info">…</span>`
+        : `<button class="page-btn ${p===dqPage?'active':''}" data-dq-page="${p}">${p}</button>`);
+    }
+    parts.push(`<button class="page-btn" ${dqPage===totalPages?'disabled':''} data-dq-page="${dqPage+1}">▶</button>`);
+    pgEl.innerHTML = parts.join('');
+    pgEl.querySelectorAll('[data-dq-page]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.disabled) return;
+        dqPage = parseInt(btn.dataset.dqPage, 10);
+        renderDQBrowser();
+        $('#panel-quality .table-wrapper').scrollIntoView({ behavior:'smooth', block:'start' });
+      });
+    });
+  }
+
   // ─── EVENT LISTENERS ──────────────────────────────
   function initEvents() {
+
     // Search (debounced)
     let searchTimer;
     searchInput.addEventListener('input', () => {
@@ -1031,6 +1206,7 @@
         $$('.tab-panel').forEach(p => p.classList.remove('active'));
         $(`#panel-${tab}`).classList.add('active');
         if (tab === 'analytics') renderCharts();
+        if (tab === 'quality')   renderDataQuality();
       });
     });
 

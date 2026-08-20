@@ -1295,3 +1295,213 @@ tbody td:first-child {
   background: var(--bg-elevated);
   color: var(--text-primary);
 }
+
+/* ══════════════════════════════════════════════════════
+   DATA QUALITY TAB
+   ══════════════════════════════════════════════════════ */
+
+/* Summary bar */
+.dq-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.dq-summary-item {
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+  transition: all var(--transition-base);
+}
+
+.dq-summary-item:hover {
+  border-color: var(--border-accent);
+  transform: translateY(-2px);
+}
+
+.dq-summary-value {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+
+.dq-summary-value.good { color: var(--success-400); }
+.dq-summary-value.warn { color: var(--warning-400); }
+.dq-summary-value.bad  { color: var(--danger-400);  }
+
+.dq-summary-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Section title */
+.dq-section-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Field completeness cards */
+.dq-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.dq-field-card {
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.dq-field-card:hover {
+  border-color: var(--border-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(99,102,241,0.12);
+}
+
+.dq-field-card.dq-selected {
+  border-color: var(--primary-500);
+  background: rgba(99,102,241,0.1);
+  box-shadow: 0 0 0 2px rgba(99,102,241,0.25);
+}
+
+.dq-field-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0.6rem;
+}
+
+.dq-field-icon  { font-size: 1rem; flex-shrink: 0; }
+.dq-field-name  { font-size: 0.8rem; font-weight: 600; color: var(--text-primary); flex: 1; }
+.dq-field-pct   { font-size: 0.85rem; font-weight: 800; flex-shrink: 0; }
+
+.dq-field-pct.dq-good { color: var(--success-400); }
+.dq-field-pct.dq-warn { color: var(--warning-400); }
+.dq-field-pct.dq-bad  { color: var(--danger-400);  }
+
+/* Animated progress bar */
+.dq-bar-track {
+  height: 5px;
+  background: rgba(148,163,184,0.12);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.6rem;
+}
+
+.dq-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+}
+
+.dq-bar-fill.dq-good { background: linear-gradient(90deg, var(--success-500), var(--success-400)); }
+.dq-bar-fill.dq-warn { background: linear-gradient(90deg, var(--warning-500), var(--warning-400)); }
+.dq-bar-fill.dq-bad  { background: linear-gradient(90deg, var(--danger-500),  var(--danger-400));  }
+
+.dq-field-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+}
+
+.dq-stat-filled  { color: var(--text-muted); }
+.dq-stat-missing { color: var(--text-muted); }
+.dq-stat-missing.has-missing { color: var(--warning-400); font-weight: 600; }
+
+/* Filter chips */
+.dq-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.dq-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid var(--border-default);
+  border-radius: 100px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.dq-chip span {
+  background: rgba(239,68,68,0.15);
+  color: var(--danger-400);
+  border-radius: 100px;
+  padding: 1px 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.dq-chip:hover {
+  border-color: var(--warning-400);
+  color: var(--warning-400);
+}
+
+.dq-chip.active {
+  background: rgba(245,158,11,0.12);
+  border-color: var(--warning-400);
+  color: var(--warning-400);
+  font-weight: 600;
+}
+
+/* Missing count label */
+.dq-missing-count {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.dq-missing-count strong { color: var(--primary-400); }
+
+/* Missing cell highlight */
+.dq-cell-missing {
+  color: var(--danger-400) !important;
+  font-style: italic;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .dq-summary { grid-template-columns: repeat(2, 1fr); }
+  .dq-fields-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .dq-summary { grid-template-columns: 1fr 1fr; }
+  .dq-fields-grid { grid-template-columns: 1fr; }
+  .dq-summary-value { font-size: 1.5rem; }
+}
