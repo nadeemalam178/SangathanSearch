@@ -18,7 +18,7 @@
   const CACHE_DB_NAME    = 'SangathanCache';
   const CACHE_STORE_NAME = 'csvCache';
   const CACHE_TTL_MS     = 30 * 60 * 1000; // 30 minutes
-  const CACHE_KEY        = 'sangathan_data';
+  const CACHE_KEY        = 'sangathan_data_v2'; // bumped: contact numbers re-parsed
 
   const COLUMNS = [
     'District', 'Name', "Father/Husband's Name", 'Contact No.', 'Anumandal',
@@ -119,7 +119,45 @@
     } catch { /* ignore */ }
   }
 
+  // ─── CONTACT NUMBER PARSER ────────────────────────
+  /**
+   * Splits a raw contact field that may contain multiple phone numbers
+   * separated by /, comma, newline, or space.
+   * Normalises each to a 10-digit Indian mobile and returns them
+   * joined as "XXXXXXXXXX / XXXXXXXXXX".
+   */
+  function parseContactNumbers(raw) {
+    if (!raw) return '';
+
+    // Split on common separators: / , newline  and plain space
+    const parts = raw.split(/[\/,\n\r|&]+/).flatMap(p => p.trim().split(/\s+/));
+
+    const valid = [];
+    for (let part of parts) {
+      // Keep only digits and leading +
+      let digits = part.replace(/[^0-9]/g, '');
+
+      // Strip country code prefix: +91 / 91 (12 digits) or leading 0 (11 digits)
+      if (digits.length === 12 && digits.startsWith('91')) {
+        digits = digits.slice(2);
+      } else if (digits.length === 11 && digits.startsWith('0')) {
+        digits = digits.slice(1);
+      }
+
+      // Accept valid 10-digit Indian mobile (starts with 6-9)
+      if (digits.length === 10 && /^[6-9]/.test(digits)) {
+        if (!valid.includes(digits)) valid.push(digits);
+      } else if (digits.length > 0 && digits.length !== 10) {
+        // Non-standard length — keep as-is so we don't lose data
+        if (!valid.includes(digits)) valid.push(digits);
+      }
+    }
+
+    return valid.length > 0 ? valid.join(' / ') : raw.replace(/[^0-9+\/,\s]/g, '').trim();
+  }
+
   // ─── CSV PARSER ───────────────────────────────────
+
   /**
    * Fast CSV → array-of-objects in async chunks.
    * Calls onProgress(pct 0-100) while parsing.
@@ -204,9 +242,9 @@
               const n = parseInt(obj['Age'], 10);
               obj['Age'] = isNaN(n) ? '' : String(n);
             }
-            // Clean contact
+            // Clean contact — split multiple numbers, normalise each to 10 digits
             if (obj['Contact No.']) {
-              obj['Contact No.'] = obj['Contact No.'].replace(/[^0-9+]/g, '');
+              obj['Contact No.'] = parseContactNumbers(obj['Contact No.']);
             }
             // ── PRE-BUILD SEARCH INDEX (key optimisation) ──
             obj._searchText = COLUMNS.map(c => obj[c] || '').join(' ').toLowerCase();
