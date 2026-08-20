@@ -1276,14 +1276,6 @@ tbody td:first-child {
 /* ══════════════════════════════════════════════════════
    DUPLICATES & BULK SEARCH
    ══════════════════════════════════════════════════════ */
-.duplicate-group {
-  border-left: 3px solid #ef4444 !important;
-  background: rgba(239, 68, 68, 0.05) !important;
-}
-
-.duplicate-group:hover {
-  background: rgba(239, 68, 68, 0.1) !important;
-}
 
 #bulk-search-text:focus {
   outline: none;

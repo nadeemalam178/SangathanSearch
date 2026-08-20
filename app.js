@@ -31,7 +31,6 @@
   // ─── STATE ────────────────────────────────────────
   let allData       = [];
   let filteredData  = [];
-  let duplicatesData = [];
   let currentPage   = 1;
   let perPage       = 50;
   let sortCol       = null;
@@ -65,7 +64,6 @@
   const perPageSelect = $('#per-page-select');
   const bulkModal     = $('#bulk-modal');
   const bulkSearchText= $('#bulk-search-text');
-  const duplicatesBody= $('#duplicates-body');
 
   // ─── LOADER HELPERS ───────────────────────────────
   function setLoaderStatus(text, sub) {
@@ -236,8 +234,7 @@
       setLoaderProgress(100);
       hideLoader();
       showToast('✅ Loaded ' + allData.length + ' contacts (from cache)', 'success');
-      return;
-    }
+      return;    }
 
     // 2. Fetch fresh CSV
     try {
@@ -255,12 +252,12 @@
       });
 
       setLoaderProgress(85);
-      setLoaderStatus('Processing', 'De-duplicating and indexing…');
+      setLoaderStatus('Processing', 'Indexing contacts…');
 
       await processData(raw);
 
       // 4. Cache result
-      await setCached({ ts: Date.now(), data: allData.concat(duplicatesData) });
+      await setCached({ ts: Date.now(), data: allData });
 
       setLoaderProgress(100);
       hideLoader();
@@ -275,14 +272,13 @@
   }
 
   async function processData(raw) {
-    // De-duplicate: keep first occurrence, collect duplicates
-    const seen = new Map();
+    // De-duplicate: keep only the first occurrence, silently discard duplicates
+    const seen   = new Set();
     const deduped = [];
-    duplicatesData = [];
-    totalRawRows   = raw.length;
+    totalRawRows  = raw.length;
 
     for (const row of raw) {
-      // Ensure search index exists (cache may have stored pre-indexed rows)
+      // Ensure search index exists
       if (!row._searchText) {
         row._searchText = COLUMNS.map(c => row[c] || '').join(' ').toLowerCase();
       }
@@ -294,23 +290,14 @@
 
       const key = `${contact}_${name}`.toLowerCase();
       if (!seen.has(key)) {
-        seen.set(key, [row]);
-      } else {
-        seen.get(key).push(row);
-      }
-    }
-
-    for (const rows of seen.values()) {
-      deduped.push(rows[0]);
-      if (rows.length > 1) {
-        duplicatesData = duplicatesData.concat(rows);
+        seen.add(key);
+        deduped.push(row);
       }
     }
 
     allData      = deduped;
     filteredData = [...allData];
 
-    renderDuplicates();
     populateFilters();
     updateStats();
     renderTable();
@@ -353,7 +340,6 @@
     $('#stat-blocks').textContent       = new Set(data.map(d => d['Block']).filter(Boolean)).size;
     $('#stat-designations').textContent = new Set(data.map(d => d['Current JS Designation Final']).filter(Boolean)).size;
     $('#stat-female').textContent       = data.filter(d => d['Gender'] && d['Gender'].toLowerCase() === 'female').length;
-    $('#stat-duplicates').textContent   = duplicatesData.length > 0 ? duplicatesData.length.toLocaleString() : '0';
   }
 
   // ─── SEARCH & FILTER ─────────────────────────────
@@ -997,9 +983,6 @@
       });
     });
 
-    // Duplicates stat card click
-    $('#stat-card-duplicates').addEventListener('click', () => { $('#nav-duplicates').click(); });
-
     // Bulk search modal
     $('#bulk-search-toggle').addEventListener('click', () => { bulkModal.classList.add('active'); });
     $('#bulk-modal-close').addEventListener('click',   () => { bulkModal.classList.remove('active'); });
@@ -1020,10 +1003,6 @@
     $('#export-csv').addEventListener('click',   () => exportCSV(filteredData, 'sangathan_contacts.csv'));
     $('#export-excel').addEventListener('click', () => exportExcel(filteredData, 'sangathan_contacts.xlsx'));
     $('#export-pdf').addEventListener('click',   () => exportPDF(filteredData, 'sangathan_contacts.pdf'));
-
-    // Duplicates export
-    $('#export-dup-csv').addEventListener('click',  () => exportCSV(duplicatesData, 'sangathan_duplicates.csv'));
-    $('#export-dup-xlsx').addEventListener('click', () => exportExcel(duplicatesData, 'sangathan_duplicates.xlsx'));
   }
 
   // ─── INIT ─────────────────────────────────────────
