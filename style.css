@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+/* Google Fonts are loaded via <link> in index.html for non-blocking load */
 
 /* ══════════════════════════════════════════════════════
    DESIGN TOKENS
@@ -98,6 +98,11 @@ body::before {
   0%   { opacity: 0.7; transform: scale(1); }
   50%  { opacity: 1;   transform: scale(1.05); }
   100% { opacity: 0.7; transform: scale(1); }
+}
+
+/* Disable heavy animation on mobile / reduced-motion to save battery */
+@media (max-width: 768px), (prefers-reduced-motion: reduce) {
+  body::before { animation: none; }
 }
 
 /* ══════════════════════════════════════════════════════
@@ -294,15 +299,15 @@ body::before {
    ══════════════════════════════════════════════════════ */
 .search-field-selector {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
   margin-bottom: 1rem;
-  padding: 12px 16px;
+  padding: 10px 14px;
   background: var(--bg-glass);
   backdrop-filter: blur(12px);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
+  overflow: hidden;
 }
 
 .search-field-label {
@@ -311,9 +316,20 @@ body::before {
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-right: 4px;
   white-space: nowrap;
+  flex-shrink: 0;
 }
+
+/* Scrollable chip row — no wrap on mobile */
+.search-chips-scroll {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  padding-bottom: 2px;
+}
+.search-chips-scroll::-webkit-scrollbar { display: none; }
 
 .search-chip {
   padding: 6px 14px;
@@ -580,6 +596,13 @@ body::before {
   gap: 0.75rem;
 }
 
+.results-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .results-count {
   font-size: 0.875rem;
   color: var(--text-secondary);
@@ -593,6 +616,14 @@ body::before {
 .export-group {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Search bar action buttons group */
+.search-bar-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .export-btn {
@@ -630,6 +661,7 @@ body::before {
 
 .table-scroll {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* smooth momentum scroll on iOS */
 }
 
 table {
@@ -1010,6 +1042,30 @@ tbody td:first-child {
   color: var(--text-muted);
 }
 
+/* Progress bar */
+.loader-progress-wrap {
+  margin-top: 1.5rem;
+  width: 220px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.loader-progress-bar {
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-600), var(--primary-400));
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.5);
+}
+
+.loader-progress-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 6px;
+}
+
 /* ══════════════════════════════════════════════════════
    EMPTY / ERROR STATES
    ══════════════════════════════════════════════════════ */
@@ -1095,48 +1151,107 @@ tbody td:first-child {
 }
 
 /* ══════════════════════════════════════════════════════
-   RESPONSIVE
+   RESPONSIVE — TABLET (≤ 768px)
    ══════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   .app-header { padding: 0 1rem; }
-  .stats-row { padding: 0 1rem; }
-  .main-content { padding: 0 1rem 2rem; }
+  .header-inner { height: auto; flex-wrap: wrap; gap: 0; padding: 10px 0; }
 
   .logo-text { font-size: 1rem; }
   .logo-sub  { display: none; }
 
-  .header-nav { gap: 2px; }
-  .nav-btn { padding: 6px 10px; font-size: 0.75rem; }
+  /* Nav wraps below logo */
+  .header-nav {
+    width: 100%;
+    gap: 2px;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 6px;
+    margin-top: 4px;
+    justify-content: center;
+  }
+  .nav-btn { padding: 7px 12px; font-size: 0.78rem; }
 
-  .stats-row { grid-template-columns: repeat(2, 1fr); }
-
-  .filters-grid {
-    grid-template-columns: 1fr 1fr;
+  .stats-row {
+    padding: 0 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin: 1rem auto;
   }
 
-  .charts-grid {
-    grid-template-columns: 1fr;
-  }
+  .stat-card { padding: 1rem 1.1rem; }
+  .stat-value { font-size: 1.4rem; }
 
-  .detail-grid {
-    grid-template-columns: 1fr;
-  }
+  .main-content { padding: 0 1rem 2rem; }
 
+  .search-filters-bar { gap: 0.75rem; }
+  .search-bar-actions { flex-shrink: 0; }
+
+  .filters-grid { grid-template-columns: 1fr 1fr; }
+
+  .results-header { gap: 0.5rem; }
+  .results-controls { gap: 8px; }
+
+  .charts-grid { grid-template-columns: 1fr; }
+
+  .detail-grid { grid-template-columns: 1fr; }
+
+  /* Modal: near full-screen on tablet */
+  .modal-overlay { padding: 0.75rem; }
   .modal {
     max-width: 100%;
+    max-height: 92vh;
     border-radius: var(--radius-lg);
   }
-
   .modal-header { padding: 1.25rem 1.25rem 0.75rem; }
   .modal-body { padding: 1.25rem; }
+
+  /* Toast moves to bottom-center on mobile */
+  .toast-container {
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+  }
 }
 
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE — MOBILE (≤ 480px)
+   ══════════════════════════════════════════════════════ */
 @media (max-width: 480px) {
-  .stats-row { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+
   .filters-grid { grid-template-columns: 1fr; }
-  .search-box { min-width: 100%; }
-  .search-filters-bar { flex-direction: column; align-items: stretch; }
-  .export-group { flex-wrap: wrap; }
+
+  /* Full-width search bar */
+  .search-box { min-width: 0; flex: 1 1 100%; }
+  .search-filters-bar { flex-direction: row; flex-wrap: wrap; }
+
+  /* Filter buttons stay inline */
+  .search-bar-actions { flex-shrink: 0; }
+  .filter-toggle-btn { padding: 10px 14px; font-size: 0.8rem; }
+
+  .export-group { flex-wrap: wrap; gap: 6px; }
+  .export-btn { font-size: 0.7rem; padding: 7px 10px; }
+
+  /* Table columns: min-width to prevent squeeze */
+  tbody td { min-width: 80px; padding: 10px 12px; font-size: 0.75rem; }
+  thead th { padding: 10px 12px; font-size: 0.7rem; }
+
+  /* Modal: full-screen on small phones */
+  .modal-overlay { padding: 0; align-items: flex-end; }
+  .modal {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: var(--radius-xl);
+    border-top-right-radius: var(--radius-xl);
+    max-height: 90vh;
+  }
+
+  /* Bulk modal full-screen */
+  #bulk-modal.modal-overlay { align-items: flex-end; }
+  #bulk-modal .modal { max-width: 100%; }
+
+  /* Pagination: smaller buttons */
+  .page-btn { width: 32px; height: 32px; font-size: 0.75rem; }
 }
 
 /* ══════════════════════════════════════════════════════

@@ -2,9 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="Sangathan Contact Directory — Search, filter, and explore Jan Suraaj organization contacts across Bihar with advanced analytics.">
+  <meta name="theme-color" content="#0a0a1a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Sangathan Search | Contact Directory</title>
+
+  <!-- ─── DNS / Preconnect hints ─── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://docs.google.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+  <!-- ─── Google Fonts (non-blocking) ─── -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"></noscript>
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,8 +27,12 @@
   <div class="loader-overlay" id="loader">
     <div class="loader-content">
       <div class="loader-spinner"></div>
-      <div class="loader-text">Loading Sangathan Data</div>
-      <div class="loader-sub">Fetching live records from Google Sheets…</div>
+      <div class="loader-text" id="loader-text">Loading Sangathan Data</div>
+      <div class="loader-sub" id="loader-sub">Fetching records from Google Sheets…</div>
+      <div class="loader-progress-wrap" id="loader-progress-wrap" style="display:none;">
+        <div class="loader-progress-bar" id="loader-progress-bar"></div>
+        <div class="loader-progress-label" id="loader-progress-label">0%</div>
+      </div>
     </div>
   </div>
 
@@ -92,9 +110,9 @@
       <div class="search-filters-bar">
         <div class="search-box">
           <span class="search-icon">🔍</span>
-          <input type="text" id="search-input" placeholder="Type anything — name, number, district, caste, even a single letter…" autocomplete="off">
+          <input type="text" id="search-input" placeholder="Type anything — name, number, district, caste…" autocomplete="off">
         </div>
-        <div style="display: flex; gap: 8px;">
+        <div class="search-bar-actions">
           <button class="filter-toggle-btn" id="bulk-search-toggle" style="background: var(--bg-glass); border-color: var(--primary-500); color: var(--primary-400);">
             <span>📋</span> Bulk
           </button>
@@ -107,19 +125,21 @@
       <!-- Search-In Field Selector -->
       <div class="search-field-selector" id="search-field-selector">
         <span class="search-field-label">Search in:</span>
-        <button class="search-chip active" data-field="all">🔎 All Fields</button>
-        <button class="search-chip" data-field="Name">👤 Name</button>
-        <button class="search-chip" data-field="Contact No.">📞 Contact No.</button>
-        <button class="search-chip" data-field="District">🗺️ District</button>
-        <button class="search-chip" data-field="Block">🏛️ Block</button>
-        <button class="search-chip" data-field="Panchayat">📍 Panchayat</button>
-        <button class="search-chip" data-field="Category">🏷️ Category</button>
-        <button class="search-chip" data-field="Caste">🪪 Caste</button>
-        <button class="search-chip" data-field="Gender">⚧️ Gender</button>
-        <button class="search-chip" data-field="Current JS Designation Final">🎖️ Designation</button>
-        <button class="search-chip" data-field="Father/Husband's Name">👨‍👧 Father/Husband</button>
-        <button class="search-chip" data-field="Profile">📄 Profile</button>
-        <button class="search-chip" data-field="Anumandal">🏘️ Anumandal</button>
+        <div class="search-chips-scroll">
+          <button class="search-chip active" data-field="all">🔎 All Fields</button>
+          <button class="search-chip" data-field="Name">👤 Name</button>
+          <button class="search-chip" data-field="Contact No.">📞 Contact No.</button>
+          <button class="search-chip" data-field="District">🗺️ District</button>
+          <button class="search-chip" data-field="Block">🏛️ Block</button>
+          <button class="search-chip" data-field="Panchayat">📍 Panchayat</button>
+          <button class="search-chip" data-field="Category">🏷️ Category</button>
+          <button class="search-chip" data-field="Caste">🪪 Caste</button>
+          <button class="search-chip" data-field="Gender">⚧️ Gender</button>
+          <button class="search-chip" data-field="Current JS Designation Final">🎖️ Designation</button>
+          <button class="search-chip" data-field="Father/Husband's Name">👨‍👧 Father/Husband</button>
+          <button class="search-chip" data-field="Profile">📄 Profile</button>
+          <button class="search-chip" data-field="Anumandal">🏘️ Anumandal</button>
+        </div>
       </div>
 
       <!-- Filter Panel -->
@@ -174,7 +194,7 @@
       <!-- Results header -->
       <div class="results-header">
         <div class="results-count" id="results-count">Loading…</div>
-        <div style="display:flex;align-items:center;gap:12px;">
+        <div class="results-controls">
           <select class="per-page-select" id="per-page-select">
             <option value="25">25 / page</option>
             <option value="50" selected>50 / page</option>
@@ -307,11 +327,10 @@
   <!-- ═══════════ TOASTS ═══════════ -->
   <div class="toast-container" id="toast-container"></div>
 
-  <!-- CDN libraries -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-  <script src="app.js"></script>
+  <!-- Chart.js — needed for analytics tab (deferred) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
+
+  <!-- App logic (deferred — runs after DOM is ready) -->
+  <script src="app.js" defer></script>
 </body>
 </html>
