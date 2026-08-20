@@ -18,7 +18,7 @@
   const CACHE_DB_NAME    = 'SangathanCache';
   const CACHE_STORE_NAME = 'csvCache';
   const CACHE_TTL_MS     = 30 * 60 * 1000; // 30 minutes
-  const CACHE_KEY        = 'sangathan_data_v2'; // bumped: contact numbers re-parsed
+  const CACHE_KEY        = 'sangathan_data_v3'; // bumped: 20-digit concat numbers fixed
 
   const COLUMNS = [
     'District', 'Name', "Father/Husband's Name", 'Contact No.', 'Anumandal',
@@ -122,38 +122,51 @@
   // ─── CONTACT NUMBER PARSER ────────────────────────
   /**
    * Splits a raw contact field that may contain multiple phone numbers
-   * separated by /, comma, newline, or space.
+   * separated by /, comma, newline, space — or simply concatenated with
+   * no separator at all (e.g. "98765432108765432109").
    * Normalises each to a 10-digit Indian mobile and returns them
    * joined as "XXXXXXXXXX / XXXXXXXXXX".
    */
   function parseContactNumbers(raw) {
     if (!raw) return '';
 
-    // Split on common separators: / , newline  and plain space
+    // Step 1 — split on explicit separators: / , newline, space, |, &
     const parts = raw.split(/[\/,\n\r|&]+/).flatMap(p => p.trim().split(/\s+/));
 
     const valid = [];
-    for (let part of parts) {
-      // Keep only digits and leading +
-      let digits = part.replace(/[^0-9]/g, '');
 
-      // Strip country code prefix: +91 / 91 (12 digits) or leading 0 (11 digits)
-      if (digits.length === 12 && digits.startsWith('91')) {
-        digits = digits.slice(2);
-      } else if (digits.length === 11 && digits.startsWith('0')) {
-        digits = digits.slice(1);
-      }
+    function addDigits(digits) {
+      // Strip country code: +91/91 (12 digits) or leading 0 (11 digits)
+      if (digits.length === 12 && digits.startsWith('91')) digits = digits.slice(2);
+      else if (digits.length === 11 && digits.startsWith('0'))  digits = digits.slice(1);
 
-      // Accept valid 10-digit Indian mobile (starts with 6-9)
-      if (digits.length === 10 && /^[6-9]/.test(digits)) {
+      if (digits.length === 10) {
+        // Valid 10-digit number — accept even if not starting with 6-9 (don't lose data)
         if (!valid.includes(digits)) valid.push(digits);
-      } else if (digits.length > 0 && digits.length !== 10) {
-        // Non-standard length — keep as-is so we don't lose data
+      } else if (digits.length > 10) {
+        // Step 2 — no separator present: chop into 10-digit chunks
+        for (let i = 0; i + 10 <= digits.length; i += 10) {
+          const chunk = digits.slice(i, i + 10);
+          if (!valid.includes(chunk)) valid.push(chunk);
+        }
+        // Leftover digits (if length not a multiple of 10)
+        const remainder = digits.length % 10;
+        if (remainder > 0) {
+          const tail = digits.slice(-remainder);
+          if (!valid.includes(tail)) valid.push(tail);
+        }
+      } else if (digits.length > 0) {
+        // Short fragment — keep as-is so we don't lose data
         if (!valid.includes(digits)) valid.push(digits);
       }
     }
 
-    return valid.length > 0 ? valid.join(' / ') : raw.replace(/[^0-9+\/,\s]/g, '').trim();
+    for (const part of parts) {
+      const digits = part.replace(/[^0-9]/g, '');
+      if (digits) addDigits(digits);
+    }
+
+    return valid.length > 0 ? valid.join(' / ') : raw.trim();
   }
 
   // ─── CSV PARSER ───────────────────────────────────
