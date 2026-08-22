@@ -18,7 +18,7 @@
   const CACHE_DB_NAME    = 'SangathanCache';
   const CACHE_STORE_NAME = 'csvCache';
   const CACHE_TTL_MS     = 30 * 60 * 1000; // 30 minutes
-  const CACHE_KEY        = 'sangathan_data_v4'; // bumped to invalidate cache
+  const CACHE_KEY        = 'sangathan_data_v5'; // bumped to invalidate cache
 
   const COLUMNS = [
     'District', 'Name', "Father/Husband's Name", 'Contact No.', 'Anumandal',
@@ -169,6 +169,50 @@
     return valid.length > 0 ? valid.join(' / ') : raw.trim();
   }
 
+  // ─── TRANSLITERATION ──────────────────────────────
+  const HINDI_MAP = {
+    'क': 'k', 'ख': 'kh', 'ग': 'g', 'घ': 'gh', 'ङ': 'ng',
+    'च': 'ch', 'छ': 'chh', 'ज': 'j', 'झ': 'jh', 'ञ': 'ny',
+    'ट': 't', 'ठ': 'th', 'ड': 'd', 'ढ': 'dh', 'ण': 'n',
+    'त': 't', 'थ': 'th', 'द': 'd', 'ध': 'dh', 'न': 'n',
+    'प': 'p', 'फ': 'ph', 'ब': 'b', 'भ': 'bh', 'म': 'm',
+    'य': 'y', 'र': 'r', 'ल': 'l', 'व': 'v', 'श': 'sh',
+    'ष': 'sh', 'स': 's', 'ह': 'h', 'क्ष': 'ksh', 'त्र': 'tr', 'ज्ञ': 'gy',
+    'अ': 'a', 'आ': 'aa', 'इ': 'i', 'ई': 'ee', 'उ': 'u', 'ऊ': 'oo',
+    'ए': 'e', 'ऐ': 'ai', 'ओ': 'o', 'औ': 'au',
+    'ा': 'a', 'ि': 'i', 'ी': 'i', 'ु': 'u', 'ू': 'u', 
+    'े': 'e', 'ै': 'ai', 'ो': 'o', 'ौ': 'au', 'ं': 'n',
+    'ः': 'ah', '्': '', 'ृ': 'ri', 'ँ': 'n',
+    'ड़': 'd', 'ढ़': 'dh', 'फ़': 'f', 'ज़': 'z'
+  };
+
+  function transliterateHindi(text) {
+    if (!text) return '';
+    let result = '';
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      const nextChar = text[i+1];
+      
+      let mapped = HINDI_MAP[char];
+      if (mapped !== undefined) {
+        result += mapped;
+        const isConsonant = char >= '\u0915' && char <= '\u0939';
+        const isNextMatraOrHalant = nextChar >= '\u093E' && nextChar <= '\u094D';
+        const isNextSpaceOrEnd = !nextChar || nextChar === ' ' || nextChar === '\n' || nextChar === '\t';
+        
+        if (isConsonant && !isNextMatraOrHalant && !isNextSpaceOrEnd) {
+           const isNextVowel = nextChar >= '\u0904' && nextChar <= '\u0914';
+           if (!isNextVowel && (nextChar >= '\u0900' && nextChar <= '\u097F')) {
+             result += 'a';
+           }
+        }
+      } else {
+        result += char;
+      }
+    }
+    return result;
+  }
+
   // ─── CSV PARSER ───────────────────────────────────
 
   /**
@@ -260,7 +304,9 @@
               obj['Contact No.'] = parseContactNumbers(obj['Contact No.']);
             }
             // ── PRE-BUILD SEARCH INDEX (key optimisation) ──
-            obj._searchText = COLUMNS.map(c => obj[c] || '').join(' ').toLowerCase();
+            const rawText = COLUMNS.map(c => obj[c] || '').join(' ').toLowerCase();
+            const engText = transliterateHindi(rawText);
+            obj._searchText = rawText + ' ' + engText;
 
             objects.push(obj);
           }
@@ -331,7 +377,9 @@
     for (const row of raw) {
       // Ensure search index exists
       if (!row._searchText) {
-        row._searchText = COLUMNS.map(c => row[c] || '').join(' ').toLowerCase();
+        const rawText = COLUMNS.map(c => row[c] || '').join(' ').toLowerCase();
+        const engText = transliterateHindi(rawText);
+        row._searchText = rawText + ' ' + engText;
       }
 
       const contact = (row['Contact No.'] || '').trim();
@@ -420,7 +468,8 @@
           if (bulkQueries.length > 0) {
             matched = bulkQueries.some(bq => {
               if (searchField === 'all') return row._searchText.includes(bq);
-              return (row[searchField] || '').toLowerCase().includes(bq);
+              const val = (row[searchField] || '').toLowerCase();
+              return val.includes(bq) || transliterateHindi(val).includes(bq);
             });
           } else {
             matched = true;
@@ -430,9 +479,9 @@
           if (searchField === 'all') {
             matched = row._searchText.includes(query);
           } else {
-            matched = (row[searchField] || '').toLowerCase().includes(query);
+            const val = (row[searchField] || '').toLowerCase();
+            matched = val.includes(query) || transliterateHindi(val).includes(query);
           }
-        }
 
         if (!matched) return false;
       }
