@@ -18,7 +18,7 @@
   const CACHE_DB_NAME    = 'SangathanCache';
   const CACHE_STORE_NAME = 'csvCache';
   const CACHE_TTL_MS     = 30 * 60 * 1000; // 30 minutes
-  const CACHE_KEY        = 'sangathan_data_v3'; // bumped: 20-digit concat numbers fixed
+  const CACHE_KEY        = 'sangathan_data_v4'; // bumped to invalidate cache
 
   const COLUMNS = [
     'District', 'Name', "Father/Husband's Name", 'Contact No.', 'Anumandal',
