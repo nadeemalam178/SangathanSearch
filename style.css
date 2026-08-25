@@ -1066,6 +1066,99 @@ tbody td:first-child {
   margin-top: 6px;
 }
 
+/* Loader Fallback / Local CSV Selector */
+.loader-fallback {
+  margin-top: 1.75rem;
+  max-width: 480px;
+  width: 90vw;
+  margin-left: auto;
+  margin-right: auto;
+  animation: fadeIn 0.3s ease;
+}
+
+.loader-fallback-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-accent);
+  backdrop-filter: blur(16px);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card), 0 0 30px rgba(99, 102, 241, 0.15);
+  text-align: center;
+}
+
+.loader-fallback-desc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+}
+
+.loader-fallback-desc code {
+  background: rgba(99, 102, 241, 0.2);
+  color: var(--primary-300);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.loader-fallback-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.btn-load-csv {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+  transition: all var(--transition-fast);
+  border: none;
+  font-family: inherit;
+}
+
+.btn-load-csv:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-400));
+}
+
+.btn-retry-online,
+.btn-use-cached {
+  padding: 10px 18px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: inherit;
+}
+
+.btn-retry-online:hover,
+.btn-use-cached:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--primary-400);
+}
+
+.loader-drop-hint {
+  font-size: 0.775rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
 /* ══════════════════════════════════════════════════════
    EMPTY / ERROR STATES
    ══════════════════════════════════════════════════════ */

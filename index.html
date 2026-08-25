@@ -26,12 +26,30 @@
   <!-- ═══════════ LOADER ═══════════ -->
   <div class="loader-overlay" id="loader">
     <div class="loader-content">
-      <div class="loader-spinner"></div>
+      <div class="loader-spinner" id="loader-spinner"></div>
       <div class="loader-text" id="loader-text">Loading Sangathan Data</div>
       <div class="loader-sub" id="loader-sub">Fetching records from Google Sheets…</div>
       <div class="loader-progress-wrap" id="loader-progress-wrap" style="display:none;">
         <div class="loader-progress-bar" id="loader-progress-bar"></div>
         <div class="loader-progress-label" id="loader-progress-label">0%</div>
+      </div>
+      <!-- Fallback UI when offline / opened directly via file:// -->
+      <div class="loader-fallback" id="loader-fallback" style="display:none;">
+        <div class="loader-fallback-card">
+          <p class="loader-fallback-desc">
+            Browsers restrict direct online downloads when opening HTML files directly (<code>file://</code>).
+            You can load the local <strong>data.csv</strong> file directly below:
+          </p>
+          <div class="loader-fallback-actions">
+            <label for="csv-file-input" class="btn-load-csv">
+              📂 Select data.csv File
+            </label>
+            <input type="file" id="csv-file-input" accept=".csv,text/csv" style="display:none;">
+            <button type="button" class="btn-retry-online" id="btn-retry-load">🔄 Retry Online</button>
+            <button type="button" class="btn-use-cached" id="btn-use-cached" style="display:none;">⚡ Load Cached Data</button>
+          </div>
+          <div class="loader-drop-hint">💡 Or simply drag &amp; drop <strong>data.csv</strong> anywhere on this screen</div>
+        </div>
       </div>
     </div>
   </div>
@@ -358,6 +376,9 @@
 
   <!-- Chart.js — needed for analytics tab (deferred) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
+
+  <!-- Local bundled dataset (instant load on file:// and offline) -->
+  <script src="data.js" defer></script>
 
   <!-- App logic (deferred — runs after DOM is ready) -->
   <script src="app.js" defer></script>

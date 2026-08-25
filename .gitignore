@@ -1,0 +1,13 @@
+# Large data files
+data.csv
+data.js
+
+# Python
+get-pip.py
+upload_to_sheets.py
+__pycache__/
+*.pyc
+
+# OS
+Thumbs.db
+.DS_Store

@@ -50,9 +50,14 @@
   const loader        = $('#loader');
   const loaderText    = $('#loader-text');
   const loaderSub     = $('#loader-sub');
+  const loaderSpinner = $('#loader-spinner');
   const loaderProgWrap= $('#loader-progress-wrap');
   const loaderProgBar = $('#loader-progress-bar');
   const loaderProgLbl = $('#loader-progress-label');
+  const loaderFallback= $('#loader-fallback');
+  const csvFileInput  = $('#csv-file-input');
+  const btnRetryLoad  = $('#btn-retry-load');
+  const btnUseCached  = $('#btn-use-cached');
   const searchInput   = $('#search-input');
   const filterToggle  = $('#filter-toggle');
   const filtersPanel  = $('#filters-panel');
@@ -76,6 +81,22 @@
     loaderProgWrap.style.display = 'block';
     loaderProgBar.style.width    = pct + '%';
     loaderProgLbl.textContent    = Math.round(pct) + '%';
+  }
+
+  function showLoaderFallback(title, message, allowCache = false) {
+    if (loaderSpinner) loaderSpinner.style.display = 'none';
+    if (loaderProgWrap) loaderProgWrap.style.display = 'none';
+    setLoaderStatus(title || 'Data Load Action Needed', message || 'Please select data.csv from your folder');
+    if (loaderFallback) loaderFallback.style.display = 'block';
+    if (btnUseCached) btnUseCached.style.display = allowCache ? 'inline-block' : 'none';
+  }
+
+  function resetLoaderUI() {
+    if (loaderSpinner) loaderSpinner.style.display = 'block';
+    if (loaderFallback) loaderFallback.style.display = 'none';
+    if (loaderProgWrap) loaderProgWrap.style.display = 'none';
+    loader.classList.remove('hidden');
+    loader.style.display = 'grid';
   }
 
   function hideLoader() {
@@ -319,53 +340,152 @@
   }
 
   // ─── DATA LOADING ─────────────────────────────────
+  async function loadCsvFromFile(file) {
+    if (!file) return;
+    try {
+      resetLoaderUI();
+      setLoaderStatus('Reading Local File', `Loading ${file.name}…`);
+      setLoaderProgress(5);
+
+      const text = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onprogress = (e) => {
+          if (e.lengthComputable && e.total > 0) {
+            setLoaderProgress(5 + (e.loaded / e.total) * 20); // 5-25%
+          }
+        };
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.readAsText(file);
+      });
+
+      setLoaderStatus('Parsing CSV', 'Processing records…');
+      setLoaderProgress(30);
+
+      const raw = await csvToObjectsAsync(text, (pct) => {
+        setLoaderProgress(30 + pct * 0.55); // 30-85%
+      });
+
+      setLoaderProgress(90);
+      setLoaderStatus('Processing', 'Indexing contacts…');
+
+      await processData(raw);
+      await setCached({ ts: Date.now(), data: allData });
+
+      setLoaderProgress(100);
+      hideLoader();
+      showToast(`✅ Loaded ${allData.length.toLocaleString()} contacts from local file`, 'success');
+    } catch (err) {
+      console.error('File load failed:', err);
+      showLoaderFallback('Failed to Read File', err.message);
+      showToast('❌ Error reading file: ' + err.message, 'error');
+    }
+  }
+
   async function loadData() {
+    resetLoaderUI();
     setLoaderStatus('Loading Sangathan Data', 'Checking local cache…');
 
     // 1. Try IndexedDB cache first
     const cached = await getCached();
-    if (cached && cached.ts && (Date.now() - cached.ts < CACHE_TTL_MS)) {
+    if (cached && cached.ts && (Date.now() - cached.ts < CACHE_TTL_MS) && Array.isArray(cached.data) && cached.data.length > 0) {
       setLoaderStatus('Loading Sangathan Data', 'Loading from cache…');
       setLoaderProgress(90);
       await processData(cached.data);
       setLoaderProgress(100);
       hideLoader();
-      showToast('✅ Loaded ' + allData.length + ' contacts (from cache)', 'success');
-      return;    }
+      showToast('✅ Loaded ' + allData.length.toLocaleString() + ' contacts (from cache)', 'success');
+      return;
+    }
 
-    // 2. Fetch fresh CSV
-    try {
-      setLoaderStatus('Fetching Data', 'Downloading from Google Sheets…');
-      const resp = await fetch(CSV_URL);
-      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    // 2. Try bundled local dataset (instant, works on file:// with zero setup)
+    if (typeof window.EMBEDDED_CSV_DATA === 'string' && window.EMBEDDED_CSV_DATA.length > 100) {
+      try {
+        setLoaderStatus('Parsing Records', 'Processing dataset…');
+        setLoaderProgress(20);
 
-      const text = await resp.text();
-      setLoaderStatus('Parsing Data', 'Processing records…');
-      setLoaderProgress(10);
+        const raw = await csvToObjectsAsync(window.EMBEDDED_CSV_DATA, (pct) => {
+          setLoaderProgress(20 + pct * 0.65); // 20-85%
+        });
 
-      // 3. Parse in async chunks with progress
-      const raw = await csvToObjectsAsync(text, (pct) => {
-        setLoaderProgress(10 + pct * 0.7); // 10-80%
-      });
+        setLoaderProgress(90);
+        setLoaderStatus('Processing', 'Indexing contacts…');
 
-      setLoaderProgress(85);
-      setLoaderStatus('Processing', 'Indexing contacts…');
+        await processData(raw);
+        await setCached({ ts: Date.now(), data: allData });
 
-      await processData(raw);
+        setLoaderProgress(100);
+        hideLoader();
+        showToast('✅ Loaded ' + allData.length.toLocaleString() + ' contacts', 'success');
+        return;
+      } catch (embErr) {
+        console.warn('Error parsing bundled data:', embErr);
+      }
+    }
 
-      // 4. Cache result
-      await setCached({ ts: Date.now(), data: allData });
+    // 3. If opened over HTTP/HTTPS, attempt network fetch (Google Sheets first, local data.csv fallback)
+    if (window.location.protocol.startsWith('http')) {
+      try {
+        setLoaderStatus('Fetching Data', 'Downloading from Google Sheets…');
+        let text = '';
+        try {
+          const resp = await fetch(CSV_URL);
+          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+          text = await resp.text();
+        } catch (sheetErr) {
+          console.warn('Google Sheets fetch failed, trying local data.csv fallback:', sheetErr);
+          setLoaderStatus('Fetching Data', 'Trying local data.csv…');
+          const localResp = await fetch('data.csv');
+          if (!localResp.ok) throw new Error(`Google Sheets & local data.csv failed: ${sheetErr.message}`);
+          text = await localResp.text();
+        }
 
+        setLoaderStatus('Parsing Data', 'Processing records…');
+        setLoaderProgress(10);
+
+        // Parse in async chunks with progress
+        const raw = await csvToObjectsAsync(text, (pct) => {
+          setLoaderProgress(10 + pct * 0.7); // 10-80%
+        });
+
+        setLoaderProgress(85);
+        setLoaderStatus('Processing', 'Indexing contacts…');
+
+        await processData(raw);
+
+        // Cache result
+        await setCached({ ts: Date.now(), data: allData });
+
+        setLoaderProgress(100);
+        hideLoader();
+        showToast('✅ Loaded ' + allData.length.toLocaleString() + ' contacts', 'success');
+        return;
+
+      } catch (err) {
+        console.error('Failed to load data via HTTP fetch:', err);
+      }
+    }
+
+    // 4. Fallback: if cached data exists (even expired), load it automatically
+    if (cached && cached.data && Array.isArray(cached.data) && cached.data.length > 0) {
+      setLoaderStatus('Loading Sangathan Data', 'Loading cached data (offline mode)…');
+      setLoaderProgress(90);
+      await processData(cached.data);
       setLoaderProgress(100);
       hideLoader();
-      showToast('✅ Loaded ' + allData.length + ' contacts', 'success');
-
-    } catch (err) {
-      console.error('Failed to load data:', err);
-      loaderText.textContent = 'Failed to load data';
-      loaderSub.textContent  = err.message + ' — Please refresh';
-      showToast('❌ Failed to load data: ' + err.message, 'error');
+      showToast('⚠️ Network fetch unavailable. Loaded ' + allData.length.toLocaleString() + ' contacts from offline cache', 'info');
+      return;
     }
+
+    // 5. If direct file:// opening without data.js or network completely failed, display friendly local file picker fallback
+    const isFileProto = window.location.protocol === 'file:';
+    showLoaderFallback(
+      isFileProto ? 'Select Local CSV to Begin' : 'Unable to Download Online Data',
+      isFileProto 
+        ? 'Browser security prevents automatic network downloads when opened as a file. Click below to load data.csv.'
+        : 'Network request failed. Please select your local data.csv file or retry.',
+      Boolean(cached && cached.data && cached.data.length > 0)
+    );
   }
 
   async function processData(raw) {
@@ -482,6 +602,7 @@
             const val = (row[searchField] || '').toLowerCase();
             matched = val.includes(query) || transliterateHindi(val).includes(query);
           }
+        }
 
         if (!matched) return false;
       }
@@ -1272,6 +1393,50 @@
         applySearchAndFilters();
         bulkModal.classList.remove('active');
         $('#nav-directory').click();
+      }
+    });
+
+    // Fallback UI events
+    if (csvFileInput) {
+      csvFileInput.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (file) loadCsvFromFile(file);
+      });
+    }
+
+    if (btnRetryLoad) {
+      btnRetryLoad.addEventListener('click', () => {
+        loadData();
+      });
+    }
+
+    if (btnUseCached) {
+      btnUseCached.addEventListener('click', async () => {
+        const cached = await getCached();
+        if (cached && cached.data && Array.isArray(cached.data) && cached.data.length > 0) {
+          resetLoaderUI();
+          setLoaderStatus('Loading Cached Data…');
+          setLoaderProgress(90);
+          await processData(cached.data);
+          setLoaderProgress(100);
+          hideLoader();
+          showToast(`⚡ Loaded ${allData.length.toLocaleString()} contacts from cache`, 'success');
+        } else {
+          showToast('No cached data found', 'warning');
+        }
+      });
+    }
+
+    // Drag and Drop CSV file support
+    window.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
+
+    window.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if (file && (file.name.endsWith('.csv') || file.type.includes('csv') || file.type.includes('text'))) {
+        loadCsvFromFile(file);
       }
     });
 
