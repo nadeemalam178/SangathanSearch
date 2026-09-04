@@ -18,7 +18,7 @@
   const CACHE_DB_NAME    = 'SangathanCache';
   const CACHE_STORE_NAME = 'csvCache';
   const CACHE_TTL_MS     = 30 * 60 * 1000; // 30 minutes
-  const CACHE_KEY        = 'sangathan_data_v5'; // bumped to invalidate cache
+  const CACHE_KEY        = 'sangathan_data_v6'; // bumped after filter normalization changes
 
   const COLUMNS = [
     'District', 'Name', "Father/Husband's Name", 'Contact No.', 'Anumandal',
@@ -382,13 +382,13 @@
     }
   }
 
-  async function loadData() {
+  async function loadData(forceRefresh = false) {
     resetLoaderUI();
-    setLoaderStatus('Loading Sangathan Data', 'Checking local cache…');
+    setLoaderStatus('Loading Sangathan Data', forceRefresh ? 'Refreshing from Google Sheets…' : 'Checking local cache…');
 
     // 1. Try IndexedDB cache first
     const cached = await getCached();
-    if (cached && cached.ts && (Date.now() - cached.ts < CACHE_TTL_MS) && Array.isArray(cached.data) && cached.data.length > 0) {
+    if (!forceRefresh && cached && cached.ts && (Date.now() - cached.ts < CACHE_TTL_MS) && Array.isArray(cached.data) && cached.data.length > 0) {
       setLoaderStatus('Loading Sangathan Data', 'Loading from cache…');
       setLoaderProgress(90);
       await processData(cached.data);
@@ -398,38 +398,14 @@
       return;
     }
 
-    // 2. Try bundled local dataset (instant, works on file:// with zero setup)
-    if (typeof window.EMBEDDED_CSV_DATA === 'string' && window.EMBEDDED_CSV_DATA.length > 100) {
-      try {
-        setLoaderStatus('Parsing Records', 'Processing dataset…');
-        setLoaderProgress(20);
-
-        const raw = await csvToObjectsAsync(window.EMBEDDED_CSV_DATA, (pct) => {
-          setLoaderProgress(20 + pct * 0.65); // 20-85%
-        });
-
-        setLoaderProgress(90);
-        setLoaderStatus('Processing', 'Indexing contacts…');
-
-        await processData(raw);
-        await setCached({ ts: Date.now(), data: allData });
-
-        setLoaderProgress(100);
-        hideLoader();
-        showToast('✅ Loaded ' + allData.length.toLocaleString() + ' contacts', 'success');
-        return;
-      } catch (embErr) {
-        console.warn('Error parsing bundled data:', embErr);
-      }
-    }
-
-    // 3. If opened over HTTP/HTTPS, attempt network fetch (Google Sheets first, local data.csv fallback)
+    // 2. Prefer Google Sheets data over any bundled local CSV so the site stays live and current.
     if (window.location.protocol.startsWith('http')) {
       try {
         setLoaderStatus('Fetching Data', 'Downloading from Google Sheets…');
         let text = '';
         try {
-          const resp = await fetch(CSV_URL);
+          const url = forceRefresh ? `${CSV_URL}&_=${Date.now()}` : CSV_URL;
+          const resp = await fetch(url, { cache: forceRefresh ? 'no-store' : 'default' });
           if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
           text = await resp.text();
         } catch (sheetErr) {
@@ -443,26 +419,48 @@
         setLoaderStatus('Parsing Data', 'Processing records…');
         setLoaderProgress(10);
 
-        // Parse in async chunks with progress
         const raw = await csvToObjectsAsync(text, (pct) => {
-          setLoaderProgress(10 + pct * 0.7); // 10-80%
+          setLoaderProgress(10 + pct * 0.7);
         });
 
         setLoaderProgress(85);
         setLoaderStatus('Processing', 'Indexing contacts…');
 
         await processData(raw);
-
-        // Cache result
         await setCached({ ts: Date.now(), data: allData });
 
         setLoaderProgress(100);
         hideLoader();
-        showToast('✅ Loaded ' + allData.length.toLocaleString() + ' contacts', 'success');
+        showToast(`✅ Refreshed ${allData.length.toLocaleString()} unique contacts from Google Sheets (${totalRawRows.toLocaleString()} rows received)`, 'success');
         return;
 
       } catch (err) {
         console.error('Failed to load data via HTTP fetch:', err);
+      }
+    }
+
+    // 3. Last-resort local bundled data if the app is opened outside a normal web server.
+    if (typeof window.EMBEDDED_CSV_DATA === 'string' && window.EMBEDDED_CSV_DATA.length > 100) {
+      try {
+        setLoaderStatus('Parsing Records', 'Processing bundled dataset…');
+        setLoaderProgress(20);
+
+        const raw = await csvToObjectsAsync(window.EMBEDDED_CSV_DATA, (pct) => {
+          setLoaderProgress(20 + pct * 0.65);
+        });
+
+        setLoaderProgress(90);
+        setLoaderStatus('Processing', 'Indexing contacts…');
+
+        await processData(raw);
+        await setCached({ ts: Date.now(), data: allData });
+
+        setLoaderProgress(100);
+        hideLoader();
+        showToast('✅ Loaded ' + allData.length.toLocaleString() + ' contacts from bundled data', 'success');
+        return;
+      } catch (embErr) {
+        console.warn('Error parsing bundled data:', embErr);
       }
     }
 
@@ -495,12 +493,11 @@
     totalRawRows  = raw.length;
 
     for (const row of raw) {
+      normalizeFilterValues(row);
       // Ensure search index exists
-      if (!row._searchText) {
-        const rawText = COLUMNS.map(c => row[c] || '').join(' ').toLowerCase();
-        const engText = transliterateHindi(rawText);
-        row._searchText = rawText + ' ' + engText;
-      }
+      const rawText = COLUMNS.map(c => row[c] || '').join(' ').toLowerCase();
+      const engText = transliterateHindi(rawText);
+      row._searchText = rawText + ' ' + engText;
 
       const contact = (row['Contact No.'] || '').trim();
       const name    = (row['Name']        || '').trim();
@@ -522,11 +519,42 @@
     renderTable();
   }
 
+  function normalizeFilterValues(row) {
+    const districtAliases = {
+      'bhagalpur': 'Bhagalpur', 'khagaria': 'Khagaria',
+      'sarhasa': 'Saharsa', 'purnea': 'Purnia'
+    };
+    const blockAliases = {
+      'farbeesganj': 'Forbesganj', 'jokiaat': 'Jokihat',
+      'jokihat': 'Jokihat', 'narkatiyaganj': 'Narkatiaganj',
+      'majhauliya': 'Majhaulia'
+    };
+
+    const clean = value => String(value || '').trim().replace(/\s+/g, ' ');
+    const district = clean(row['District']);
+    const block = clean(row['Block']);
+    row['District'] = districtAliases[district.toLowerCase()] || district;
+    row['Block'] = blockAliases[block.toLowerCase()] || block;
+
+    const gender = clean(row['Gender']).toLowerCase().replace(/[.\s_-]/g, '');
+    if (gender && (/^female$|^f$|women|महिला/.test(gender))) row['Gender'] = 'Female';
+    else if (gender && (/^male$|^m$|पुरुष|पुरूष/.test(gender))) row['Gender'] = 'Male';
+    else if (gender) row['Gender'] = '';
+
+    const category = clean(row['Category']).toLowerCase().replace(/[.\s_-]/g, '');
+    if (!category) row['Category'] = '';
+    else if (/^(general|gen|gn|open)|genral|genaral|gneral|genereal|generaal|generl/.test(category)) row['Category'] = 'General';
+    else if (/^(obc|0bc)$/.test(category)) row['Category'] = 'OBC';
+    else if (/^ebc/.test(category)) row['Category'] = 'EBC';
+    else if (/^sc/.test(category)) row['Category'] = 'SC';
+    else if (/^st/.test(category)) row['Category'] = 'ST';
+    else if (/minor|muslim/.test(category)) row['Category'] = 'Minority';
+    else row['Category'] = 'Other / Unclear';
+  }
+
   // ─── POPULATE FILTER DROPDOWNS ────────────────────
   function populateFilters() {
     const filterConfigs = [
-      { id: 'filter-district',    col: 'District' },
-      { id: 'filter-block',       col: 'Block' },
       { id: 'filter-category',    col: 'Category' },
       { id: 'filter-caste',       col: 'Caste' },
       { id: 'filter-designation', col: 'Current JS Designation Final' },
@@ -535,20 +563,43 @@
     ];
 
     for (const cfg of filterConfigs) {
-      const select = $(`#${cfg.id}`);
-      if (!select) continue;
-      const values = [...new Set(allData.map(d => d[cfg.col]).filter(v => v && v !== '#N/A' && v !== '#REF!'))].sort();
-      const firstOpt = select.options[0].outerHTML;
-      select.innerHTML = firstOpt;
-      // Use DocumentFragment for performance
-      const frag = document.createDocumentFragment();
-      for (const val of values) {
-        const opt = document.createElement('option');
-        opt.value = opt.textContent = val;
-        frag.appendChild(opt);
-      }
-      select.appendChild(frag);
+      fillFilterSelect($(`#${cfg.id}`), allData, cfg.col);
     }
+    fillFilterDatalist($('#district-options'), allData, 'District');
+    updateBlockOptions();
+  }
+
+  function fillFilterDatalist(list, rows, column) {
+    if (!list) return;
+    const values = [...new Set(rows.map(row => row[column]).filter(value => value && value !== '#N/A' && value !== '#REF!'))].sort((a, b) => a.localeCompare(b));
+    list.innerHTML = values.map(value => `<option value="${esc(value)}"></option>`).join('');
+  }
+
+  function fillFilterSelect(select, rows, column, emptyLabel) {
+    if (!select) return;
+    const currentValue = select.value;
+    const values = [...new Set(rows.map(row => row[column]).filter(value => value && value !== '#N/A' && value !== '#REF!'))].sort((a, b) => a.localeCompare(b));
+    const defaultOption = select.options[0];
+    select.innerHTML = '';
+    const firstOption = document.createElement('option');
+    firstOption.value = '';
+    firstOption.textContent = emptyLabel || (defaultOption ? defaultOption.textContent : `All ${column}`);
+    select.appendChild(firstOption);
+
+    const fragment = document.createDocumentFragment();
+    for (const value of values) {
+      const option = document.createElement('option');
+      option.value = option.textContent = value;
+      fragment.appendChild(option);
+    }
+    select.appendChild(fragment);
+    select.value = values.includes(currentValue) ? currentValue : '';
+  }
+
+  function updateBlockOptions() {
+    const district = $('#filter-district').value.trim().toLowerCase();
+    const rows = district ? allData.filter(row => (row['District'] || '').toLowerCase().includes(district)) : allData;
+    fillFilterDatalist($('#block-options'), rows, 'Block');
   }
 
   // ─── STATS ────────────────────────────────────────
@@ -610,7 +661,15 @@
       // Dropdown filters
       if (hasDropdownFilter) {
         for (const [col, val] of Object.entries(filters)) {
-          if (val && row[col] !== val) return false;
+          if (val) {
+            const rowValue = (row[col] || '').toLowerCase();
+            const filterValue = val.toLowerCase().trim();
+            if (col === 'District' || col === 'Block') {
+              if (!rowValue.includes(filterValue)) return false;
+            } else if (rowValue !== filterValue) {
+              return false;
+            }
+          }
         }
       }
       return true;
@@ -1326,8 +1385,23 @@
       filterToggle.classList.remove('active');
     });
 
+    // Keep location filters connected and update results as soon as a value changes.
+    $$('.filters-panel select, .filters-panel input').forEach(select => {
+      select.addEventListener('change', () => {
+        if (select.id === 'filter-district') updateBlockOptions();
+        applySearchAndFilters();
+      });
+      if (select.tagName === 'INPUT') {
+        select.addEventListener('input', () => {
+          if (select.id === 'filter-district') updateBlockOptions();
+          applySearchAndFilters();
+        });
+      }
+    });
+
     $('#clear-filters').addEventListener('click', () => {
-      $$('.filters-panel select').forEach(s => s.value = '');
+      $$('.filters-panel select, .filters-panel input').forEach(s => s.value = '');
+      updateBlockOptions();
       searchInput.value = '';
       applySearchAndFilters();
     });
@@ -1381,17 +1455,26 @@
     });
 
     // Bulk search modal
-    $('#bulk-search-toggle').addEventListener('click', () => { bulkModal.classList.add('active'); });
-    $('#bulk-modal-close').addEventListener('click',   () => { bulkModal.classList.remove('active'); });
+    $('#bulk-search-toggle').addEventListener('click', () => { bulkModal.classList.add('open'); });
+    $('#bulk-modal-close').addEventListener('click',   () => { bulkModal.classList.remove('open'); });
     $('#bulk-search-clear').addEventListener('click',  () => { bulkSearchText.value = ''; });
-    bulkModal.addEventListener('click', (e) => { if (e.target === bulkModal) bulkModal.classList.remove('active'); });
+    bulkModal.addEventListener('click', (e) => { if (e.target === bulkModal) bulkModal.classList.remove('open'); });
 
     $('#bulk-search-apply').addEventListener('click', () => {
       const text = bulkSearchText.value.trim();
-      if (text) {
-        searchInput.value = text;
+      if (!text) return;
+
+      const normalized = text
+        .replace(/\r/g, '\n')
+        .split(/\n+/)
+        .map(v => v.trim())
+        .filter(Boolean)
+        .join(', ');
+
+      if (normalized) {
+        searchInput.value = normalized;
         applySearchAndFilters();
-        bulkModal.classList.remove('active');
+        bulkModal.classList.remove('open');
         $('#nav-directory').click();
       }
     });
@@ -1406,9 +1489,11 @@
 
     if (btnRetryLoad) {
       btnRetryLoad.addEventListener('click', () => {
-        loadData();
+        loadData(true);
       });
     }
+
+    $('#btn-refresh-data').addEventListener('click', () => loadData(true));
 
     if (btnUseCached) {
       btnUseCached.addEventListener('click', async () => {

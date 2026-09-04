@@ -16,8 +16,8 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
 
   <!-- ─── Google Fonts (non-blocking) ─── -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"></noscript>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"></noscript>
 
   <link rel="stylesheet" href="style.css">
 </head>
@@ -68,55 +68,22 @@
         <button class="nav-btn active" data-tab="directory" id="nav-directory">📋 Directory</button>
         <button class="nav-btn" data-tab="analytics" id="nav-analytics">📊 Analytics</button>
         <button class="nav-btn" data-tab="quality" id="nav-quality">🩺 Data Quality</button>
+        <button class="refresh-btn" id="btn-refresh-data" title="Fetch the latest data from Google Sheets">↻ Refresh</button>
       </nav>
     </div>
   </header>
-
-  <!-- ═══════════ STAT CARDS ═══════════ -->
-  <section class="stats-row" id="stats-row">
-    <div class="stat-card">
-      <div class="stat-icon purple">👥</div>
-      <div>
-        <div class="stat-value" id="stat-total">—</div>
-        <div class="stat-label">Unique Contacts</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon pink">🗺️</div>
-      <div>
-        <div class="stat-value" id="stat-districts">—</div>
-        <div class="stat-label">Districts</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon green">🏛️</div>
-      <div>
-        <div class="stat-value" id="stat-blocks">—</div>
-        <div class="stat-label">Blocks</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon amber">🏷️</div>
-      <div>
-        <div class="stat-value" id="stat-designations">—</div>
-        <div class="stat-label">Designations</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon red">👩</div>
-      <div>
-        <div class="stat-value" id="stat-female">—</div>
-        <div class="stat-label">Female Leaders</div>
-      </div>
-    </div>
-
-  </section>
 
   <!-- ═══════════ MAIN CONTENT ═══════════ -->
   <main class="main-content">
 
     <!-- ──── DIRECTORY TAB ──── -->
     <div class="tab-panel active" id="panel-directory">
+
+      <div class="directory-intro">
+        <span class="directory-kicker">Organisation directory</span>
+        <h1>Find a contact</h1>
+        <p>Search by name, phone number, district, or block.</p>
+      </div>
 
       <!-- Search & Filter Toggle -->
       <div class="search-filters-bar">
@@ -156,14 +123,23 @@
 
       <!-- Filter Panel -->
       <div class="filters-panel" id="filters-panel">
+        <div class="filters-heading">
+          <div>
+            <strong>Refine directory</strong>
+            <span>Combine location, profile, and status filters.</span>
+          </div>
+          <span class="filter-tip">Updates instantly</span>
+        </div>
         <div class="filters-grid">
           <div class="filter-group">
             <label for="filter-district">District</label>
-            <select id="filter-district"><option value="">All Districts</option></select>
+            <input id="filter-district" class="filter-text-input" list="district-options" placeholder="Type district name">
+            <datalist id="district-options"></datalist>
           </div>
           <div class="filter-group">
             <label for="filter-block">Block</label>
-            <select id="filter-block"><option value="">All Blocks</option></select>
+            <input id="filter-block" class="filter-text-input" list="block-options" placeholder="Type block name">
+            <datalist id="block-options"></datalist>
           </div>
           <div class="filter-group">
             <label for="filter-category">Category</label>
@@ -307,6 +283,13 @@
 
     <!-- ──── ANALYTICS TAB ──── -->
     <div class="tab-panel" id="panel-analytics">
+      <section class="stats-row analytics-stats" id="stats-row">
+        <div class="stat-card"><div class="stat-icon purple">👥</div><div><div class="stat-value" id="stat-total">—</div><div class="stat-label">Unique Contacts</div></div></div>
+        <div class="stat-card"><div class="stat-icon pink">🗺️</div><div><div class="stat-value" id="stat-districts">—</div><div class="stat-label">Districts</div></div></div>
+        <div class="stat-card"><div class="stat-icon green">🏛️</div><div><div class="stat-value" id="stat-blocks">—</div><div class="stat-label">Blocks</div></div></div>
+        <div class="stat-card"><div class="stat-icon amber">🏷️</div><div><div class="stat-value" id="stat-designations">—</div><div class="stat-label">Designations</div></div></div>
+        <div class="stat-card"><div class="stat-icon red">👩</div><div><div class="stat-value" id="stat-female">—</div><div class="stat-label">Female Leaders</div></div></div>
+      </section>
       <div class="charts-grid">
         <div class="chart-card full-width">
           <h3>📍 Contacts by District (Top 20)</h3>
@@ -354,13 +337,13 @@
       <div class="modal-header">
         <div>
           <div class="modal-title">Bulk Search</div>
-          <div class="modal-subtitle">Paste a list of names or numbers to search them all at once.</div>
+          <div class="modal-subtitle">Paste names or phone numbers, one per line, to search them all at once.</div>
         </div>
         <button class="modal-close" id="bulk-modal-close">✕</button>
       </div>
       <div class="modal-body" style="padding: 24px;">
         <label for="bulk-search-text" style="display: block; margin-bottom: 8px; color: var(--text-secondary); font-size: 0.875rem;">
-          Paste values (separated by commas or newlines):
+          Paste one name or phone number per line. Commas also work.
         </label>
         <textarea id="bulk-search-text" rows="8" style="width: 100%; background: var(--bg-deep); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 12px; color: var(--text-primary); font-family: inherit; resize: vertical; margin-bottom: 16px;" placeholder="e.g.&#10;9876543210&#10;8765432109&#10;Zubair Alam"></textarea>
         <div style="display: flex; gap: 12px; justify-content: flex-end;">
@@ -376,9 +359,6 @@
 
   <!-- Chart.js — needed for analytics tab (deferred) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
-
-  <!-- Local bundled dataset (instant load on file:// and offline) -->
-  <script src="data.js" defer></script>
 
   <!-- App logic (deferred — runs after DOM is ready) -->
   <script src="app.js" defer></script>
