@@ -1,0 +1,13 @@
+{
+  "name": "sangathan-search",
+  "version": "8.0.0",
+  "description": "Sangathan Contact Directory with High-Performance Static Data Architecture",
+  "scripts": {
+    "export": "node scripts/export_data.js",
+    "build": "node scripts/export_data.js",
+    "start": "npx serve -l 3000 ."
+  },
+  "dependencies": {
+    "@vercel/analytics": "^1.5.0"
+  }
+}

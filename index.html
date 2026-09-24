@@ -20,6 +20,12 @@
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"></noscript>
 
   <link rel="stylesheet" href="style.css">
+
+  <!-- Vercel Web Analytics -->
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 
@@ -89,7 +95,8 @@
       <div class="search-filters-bar">
         <div class="search-box">
           <span class="search-icon">🔍</span>
-          <input type="text" id="search-input" placeholder="Type anything — name, number, district, caste…" autocomplete="off">
+          <input type="search" id="search-input" placeholder="Type anything — name, number, district, caste…" autocomplete="off" inputmode="search" enterkeyhint="search" autocapitalize="none" autocorrect="off">
+          <button type="button" class="search-clear-btn" id="search-clear-btn" style="display:none;" title="Clear search">✕</button>
         </div>
         <div class="search-bar-actions">
           <button class="filter-toggle-btn" id="bulk-search-toggle" style="background: var(--bg-glass); border-color: var(--primary-500); color: var(--primary-400);">
@@ -97,6 +104,7 @@
           </button>
           <button class="filter-toggle-btn" id="filter-toggle">
             <span>⚙️</span> Filters
+            <span class="filter-count-badge" id="filter-count-badge" style="display:none;">0</span>
           </button>
         </div>
       </div>
@@ -183,6 +191,10 @@
       <div class="results-header">
         <div class="results-count" id="results-count">Loading…</div>
         <div class="results-controls">
+          <div class="view-mode-toggle" id="view-mode-toggle">
+            <button type="button" class="view-toggle-btn active" data-mode="cards" id="btn-view-cards" title="Cards View">🪪 Cards</button>
+            <button type="button" class="view-toggle-btn" data-mode="table" id="btn-view-table" title="Table View">📋 Table</button>
+          </div>
           <select class="per-page-select" id="per-page-select">
             <option value="25">25 / page</option>
             <option value="50" selected>50 / page</option>
@@ -197,9 +209,10 @@
         </div>
       </div>
 
-      <!-- Table -->
+      <!-- Table & Cards View -->
       <div class="table-wrapper">
-        <div class="table-scroll">
+        <div class="cards-grid" id="cards-container"></div>
+        <div class="table-scroll" id="table-scroll">
           <table id="contacts-table">
             <thead>
               <tr>
@@ -353,6 +366,26 @@
       </div>
     </div>
   </div>
+
+  <!-- ═══════════ MOBILE BOTTOM NAVIGATION ═══════════ -->
+  <nav class="mobile-bottom-nav" id="mobile-bottom-nav" aria-label="Mobile Navigation">
+    <button type="button" class="bottom-nav-item active" data-tab="directory" id="bnav-directory">
+      <span class="bottom-nav-icon">📋</span>
+      <span class="bottom-nav-label">Directory</span>
+    </button>
+    <button type="button" class="bottom-nav-item" data-tab="analytics" id="bnav-analytics">
+      <span class="bottom-nav-icon">📊</span>
+      <span class="bottom-nav-label">Analytics</span>
+    </button>
+    <button type="button" class="bottom-nav-item" data-tab="quality" id="bnav-quality">
+      <span class="bottom-nav-icon">🩺</span>
+      <span class="bottom-nav-label">Quality</span>
+    </button>
+    <button type="button" class="bottom-nav-item" id="bnav-refresh" title="Refresh Data">
+      <span class="bottom-nav-icon">↻</span>
+      <span class="bottom-nav-label">Refresh</span>
+    </button>
+  </nav>
 
   <!-- ═══════════ TOASTS ═══════════ -->
   <div class="toast-container" id="toast-container"></div>

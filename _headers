@@ -1,0 +1,21 @@
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+
+/index.html
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/data/*
+  Cache-Control: public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800
+  Access-Control-Allow-Origin: *
+
+/api/*
+  Cache-Control: public, max-age=60, s-maxage=300, stale-while-revalidate=3600
+  Access-Control-Allow-Origin: *
+
+/app.js
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/style.css
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
