@@ -7,10 +7,12 @@
     "export": "node scripts/export_data.js",
     "build": "node scripts/export_data.js",
     "build:db": "python scripts/build_sqlite.py",
+    "upload:supabase": "node scripts/upload_to_supabase.js",
     "start": "node server.js",
     "dev": "node server.js"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.117.2",
     "@vercel/analytics": "^1.5.0"
   }
 }

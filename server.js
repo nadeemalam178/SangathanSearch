@@ -4,6 +4,7 @@ const path = require('path');
 const searchHandler = require('./api/search.js');
 const sheetHandler = require('./api/sheet.js');
 const syncHandler = require('./api/sync.js');
+const supabaseSearchHandler = require('./api/supabase_search.js');
 
 const PORT = process.env.PORT || 8081;
 
@@ -92,6 +93,19 @@ const server = http.createServer(async (req, res) => {
       await syncHandler(reqAdapter, resAdapter);
     } catch (err) {
       console.error('Sync handler error:', err);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // Route 4: Supabase Search API
+  if (pathname === '/api/supabase-search') {
+    const { reqAdapter, resAdapter } = makeAdapter();
+    try {
+      await supabaseSearchHandler(reqAdapter, resAdapter);
+    } catch (err) {
+      console.error('Supabase search handler error:', err);
       res.writeHead(500, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: err.message }));
     }
