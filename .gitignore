@@ -1,6 +1,8 @@
 # Large data files
 data.csv
 data.js
+*.db
+sangathan.db
 
 # Python
 get-pip.py

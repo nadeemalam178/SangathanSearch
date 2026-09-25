@@ -23,3 +23,21 @@ If you prefer running from the command line:
 python -m http.server 8080
 ```
 Then open `http://localhost:8080/index.html` in your browser.
+
+---
+
+## 🤖 AI & Model Context Protocol (MCP) Tooling
+
+This repository includes configuration and tooling for AI agents (Antigravity, Claude, Cursor) via MCP:
+
+- **SQLite Database**: Run `npm run build:db` (or `python scripts/build_sqlite.py`) to convert `data.csv` into an indexed `sangathan.db` for instant SQL analytics.
+- **MCP Servers (`.agents/mcp_config.json`)**:
+  - `chrome-devtools-mcp`: Browser testing, DOM snapshots, console monitoring.
+  - `sqlite`: Direct SQL queries on 215,000+ members database.
+  - `filesystem`: Project and downloads file navigation.
+  - `git`: Git repository operations and status.
+  - `sequential-thinking`: Complex multi-step reasoning.
+  - `memory`: Knowledge graph context persistence.
+  - `context7`: Up-to-date documentation lookup.
+  - `github`: GitHub integration.
+

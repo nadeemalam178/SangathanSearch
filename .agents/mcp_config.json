@@ -1,0 +1,44 @@
+{
+  "mcpServers": {
+    "chrome-devtools-mcp": {
+      "command": "chrome-devtools-mcp",
+      "args": []
+    },
+    "filesystem": {
+      "command": "mcp-server-filesystem",
+      "args": [
+        "."
+      ]
+    },
+    "sequential-thinking": {
+      "command": "mcp-server-sequential-thinking",
+      "args": []
+    },
+    "memory": {
+      "command": "mcp-server-memory",
+      "args": []
+    },
+    "git": {
+      "command": "mcp-server-git",
+      "args": [
+        "--repository",
+        "."
+      ]
+    },
+    "sqlite": {
+      "command": "mcp-server-sqlite",
+      "args": [
+        "--db-path",
+        "sangathan.db"
+      ]
+    },
+    "context7": {
+      "command": "context7-mcp",
+      "args": []
+    },
+    "github": {
+      "command": "mcp-server-github",
+      "args": []
+    }
+  }
+}
