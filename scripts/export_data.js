@@ -2,14 +2,54 @@ const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 const zlib = require('zlib');
+const https = require('https');
 
-const ROOT_DIR = 'C:\\Users\\alamn\\Downloads\\Sangathan Search Website';
+const ROOT_DIR = path.resolve(__dirname, '..');
 const CSV_FILE = path.join(ROOT_DIR, 'data.csv');
 const DATA_DIR = path.join(ROOT_DIR, 'data');
 const DISTRICTS_DIR = path.join(DATA_DIR, 'districts');
 
+const GOOGLE_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/194ei4yzOTUMrnMLe1fseis__QQnRGk6rwA6U_WSVEUA/export?format=csv&gid=1400833008';
+
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 if (!fs.existsSync(DISTRICTS_DIR)) fs.mkdirSync(DISTRICTS_DIR, { recursive: true });
+
+function downloadFromGoogleSheets(url, destPath) {
+  return new Promise((resolve, reject) => {
+    console.log('Downloading live dataset from Google Sheets...');
+    function makeReq(curUrl) {
+      https.get(curUrl, (res) => {
+        if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+          return makeReq(res.headers.location);
+        }
+        if (res.statusCode !== 200) {
+          return reject(new Error(`Failed to download from Google Sheets, HTTP status: ${res.statusCode}`));
+        }
+        const tempPath = destPath + '.tmp';
+        const file = fs.createWriteStream(tempPath);
+        let downloadedBytes = 0;
+        res.on('data', chunk => {
+          downloadedBytes += chunk.length;
+          if (downloadedBytes % (4 * 1024 * 1024) < chunk.length) {
+            process.stdout.write(`Downloaded ${(downloadedBytes / (1024 * 1024)).toFixed(1)} MB...\r`);
+          }
+        });
+        res.pipe(file);
+        file.on('finish', () => {
+          file.close(() => {
+            if (fs.existsSync(destPath)) {
+              try { fs.unlinkSync(destPath); } catch (_) {}
+            }
+            fs.renameSync(tempPath, destPath);
+            console.log(`\nGoogle Sheets download complete: ${(fs.statSync(destPath).size / (1024 * 1024)).toFixed(2)} MB saved to data.csv`);
+            resolve();
+          });
+        });
+      }).on('error', reject);
+    }
+    makeReq(url);
+  });
+}
 
 function parseLine(text) {
   const res = [];
@@ -36,7 +76,22 @@ function toSlug(str) {
 }
 
 async function runExport() {
-  console.log('Starting export on fresh Google Sheets data...');
+  const shouldSyncFromSheets = process.argv.includes('--from-sheets') || 
+                               process.argv.includes('-s') || 
+                               !fs.existsSync(CSV_FILE);
+  if (shouldSyncFromSheets) {
+    try {
+      await downloadFromGoogleSheets(GOOGLE_SHEETS_URL, CSV_FILE);
+    } catch (err) {
+      console.warn('Google Sheets live download warning:', err.message);
+      if (!fs.existsSync(CSV_FILE)) {
+        throw new Error('data.csv does not exist and Google Sheets download failed: ' + err.message);
+      }
+      console.log('Falling back to local data.csv...');
+    }
+  }
+
+  console.log('Starting export on Sangathan dataset...');
   console.log('Reading from:', CSV_FILE);
 
   const fileStream = fs.createReadStream(CSV_FILE);
@@ -323,4 +378,11 @@ async function runExport() {
   console.log('=== EXPORT PIPELINE SUCCESSFUL ===');
 }
 
-runExport();
+if (require.main === module) {
+  runExport().catch(err => {
+    console.error('Export failed:', err);
+    process.exit(1);
+  });
+}
+
+module.exports = { runExport, GOOGLE_SHEETS_URL };

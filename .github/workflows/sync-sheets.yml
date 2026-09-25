@@ -21,13 +21,18 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Export & Pre-index Data
-        run: |
-          npm run export
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-      - name: Commit and Push Changes
+      - name: Sync from Google Sheets & Export Partitions
+        run: |
+          npm run sync
+
+      - name: Commit and Push Updated Data to GitHub
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore(data): auto-sync data from Google Sheets [skip ci]" && git push)
+          git add data.csv data/
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore(data): auto-sync fresh CSV & partitions from Google Sheets [skip ci]" && git push)

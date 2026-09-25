@@ -2,6 +2,8 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const searchHandler = require('./api/search.js');
+const sheetHandler = require('./api/sheet.js');
+const syncHandler = require('./api/sync.js');
 
 const PORT = process.env.PORT || 8081;
 
@@ -21,7 +23,7 @@ const MIME_TYPES = {
 const server = http.createServer(async (req, res) => {
   // CORS & caching headers
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Range');
 
   if (req.method === 'OPTIONS') {
@@ -32,11 +34,11 @@ const server = http.createServer(async (req, res) => {
   const parsedUrl = new URL(req.url, `http://localhost:${PORT}`);
   const pathname = decodeURIComponent(parsedUrl.pathname);
 
-  // Route 1: Serverless Search API
-  if (pathname === '/api/search') {
-    // Adapter for Vercel req/res style
+  // Helper adapter for Vercel req/res style
+  const makeAdapter = () => {
     const query = Object.fromEntries(parsedUrl.searchParams.entries());
     const reqAdapter = {
+      method: req.method,
       url: req.url,
       query,
       headers: req.headers
@@ -49,15 +51,47 @@ const server = http.createServer(async (req, res) => {
           json: (data) => {
             res.setHeader('Content-Type', 'application/json; charset=utf-8');
             res.end(JSON.stringify(data));
-          }
+          },
+          end: (data) => res.end(data)
         };
-      }
+      },
+      pipe: res.pipe ? res.pipe.bind(res) : null
     };
+    return { reqAdapter, resAdapter };
+  };
 
+  // Route 1: Serverless Search API
+  if (pathname === '/api/search') {
+    const { reqAdapter, resAdapter } = makeAdapter();
     try {
       await searchHandler(reqAdapter, resAdapter);
     } catch (err) {
       console.error('Search handler error:', err);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // Route 2: Google Sheets Proxy with CORS
+  if (pathname === '/api/sheet') {
+    try {
+      await sheetHandler(req, res);
+    } catch (err) {
+      console.error('Sheet handler error:', err);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // Route 3: Sync Trigger API
+  if (pathname === '/api/sync') {
+    const { reqAdapter, resAdapter } = makeAdapter();
+    try {
+      await syncHandler(reqAdapter, resAdapter);
+    } catch (err) {
+      console.error('Sync handler error:', err);
       res.writeHead(500, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: err.message }));
     }

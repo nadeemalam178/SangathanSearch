@@ -275,6 +275,219 @@
     return (str || '').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
   }
 
+  // ─── CSV PARSING & DATA PROCESSING ───────────────
+  function parseCSVLine(text) {
+    const res = [];
+    let cur = '';
+    let inQ = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (c === '"') {
+        if (inQ && text[i+1] === '"') { cur += '"'; i++; }
+        else { inQ = !inQ; }
+      } else if (c === ',' && !inQ) {
+        res.push(cur.trim());
+        cur = '';
+      } else {
+        cur += c;
+      }
+    }
+    res.push(cur.trim());
+    return res;
+  }
+
+  async function parseCsvAndProcess(csvText, onProgress) {
+    const rawLines = csvText.split(/\r?\n/);
+    if (!rawLines.length) return;
+
+    setLoaderStatus('Processing Sangathan Data', 'Parsing records…');
+    if (onProgress) onProgress(10);
+
+    const records = [];
+    const seen = new Set();
+    let inQuotes = false;
+    let currentRecord = '';
+
+    const lines = [];
+    for (let i = 0; i < rawLines.length; i++) {
+      const line = rawLines[i];
+      let quoteCount = 0;
+      for (let j = 0; j < line.length; j++) if (line[j] === '"') quoteCount++;
+      if (currentRecord) currentRecord += '\n' + line;
+      else currentRecord = line;
+
+      if (!inQuotes) {
+        if (quoteCount % 2 !== 0) inQuotes = true;
+        else { lines.push(currentRecord); currentRecord = ''; }
+      } else {
+        if (quoteCount % 2 !== 0) { inQuotes = false; lines.push(currentRecord); currentRecord = ''; }
+      }
+    }
+    if (currentRecord.trim()) lines.push(currentRecord);
+    if (!lines.length) return;
+
+    const header = parseCSVLine(lines[0]);
+    const totalLines = lines.length;
+
+    const districtCounts = {};
+    const blocksByDistrict = {};
+    const categoriesSet = new Set();
+    const castesSet = new Set();
+    const gendersSet = new Set();
+    const designationsSet = new Set();
+    const statusesSet = new Set();
+    const anumandalsSet = new Set();
+
+    for (let i = 1; i < totalLines; i++) {
+      const lineText = lines[i];
+      if (!lineText.trim()) continue;
+      const vals = parseCSVLine(lineText);
+      const row = {};
+      header.forEach((h, idx) => { row[h] = (vals[idx] || '').trim(); });
+
+      const name = row['Name'] || '';
+      const father = row["Father/Husband's Name"] || '';
+      const dist = row['District'] || 'Unknown';
+      const block = row['Block'] || '';
+      const pan = row['Panchayat'] || '';
+      const des = row['Current JS Designation Final'] || '';
+      let contact = (row['Contact No.'] || '').replace(/\D/g, '');
+      if (contact.length === 12 && contact.startsWith('91')) contact = contact.slice(2);
+      if (contact.length === 11 && contact.startsWith('0')) contact = contact.slice(1);
+      if (contact.length !== 10) contact = (row['Contact No.'] || '').trim();
+
+      const dedupKey = contact && contact.length === 10
+        ? `${contact}_${name}_${des}`.toLowerCase()
+        : `${name}_${father}_${dist}_${block}_${pan}_${des}`.toLowerCase();
+
+      if (seen.has(dedupKey)) continue;
+      seen.add(dedupKey);
+
+      records.push(row);
+
+      if (dist) districtCounts[dist] = (districtCounts[dist] || 0) + 1;
+      if (dist && block) {
+        if (!blocksByDistrict[dist]) blocksByDistrict[dist] = new Set();
+        blocksByDistrict[dist].add(block);
+      }
+      if (row['Category']) categoriesSet.add(row['Category']);
+      if (row['Caste']) castesSet.add(row['Caste']);
+      if (row['Gender']) gendersSet.add(row['Gender']);
+      if (des) designationsSet.add(des);
+      if (row['Current  Status']) statusesSet.add(row['Current  Status']);
+      if (row['Anumandal']) anumandalsSet.add(row['Anumandal']);
+
+      if (onProgress && i % 25000 === 0) {
+        onProgress(Math.min(90, Math.round((i / totalLines) * 80)));
+      }
+    }
+
+    const blocksObj = {};
+    for (const [d, s] of Object.entries(blocksByDistrict)) {
+      blocksObj[d] = Array.from(s).sort((a,b) => a.localeCompare(b));
+    }
+
+    summaryData = {
+      version: '2.0.0',
+      totalContacts: records.length,
+      totalRawRows: totalLines - 1,
+      totalDistricts: Object.keys(districtCounts).length,
+      filterOptions: {
+        districts: Object.keys(districtCounts).sort((a,b) => a.localeCompare(b)),
+        blocksByDistrict: blocksObj,
+        categories: Array.from(categoriesSet).sort((a,b) => a.localeCompare(b)),
+        castes: Array.from(castesSet).sort((a,b) => a.localeCompare(b)),
+        genders: Array.from(gendersSet).sort((a,b) => a.localeCompare(b)),
+        designations: Array.from(designationsSet).sort((a,b) => a.localeCompare(b)),
+        statuses: Array.from(statusesSet).sort((a,b) => a.localeCompare(b)),
+        anumandals: Array.from(anumandalsSet).sort((a,b) => a.localeCompare(b))
+      }
+    };
+
+    allData = records;
+    filteredData = allData;
+    totalRawRows = records.length;
+
+    populateFilters(summaryData.filterOptions);
+    updateStats(true);
+    renderTable();
+
+    // Cache into IndexedDB for zero-download instant reload
+    setCached({ csv: csvText, timestamp: Date.now() });
+    if (onProgress) onProgress(100);
+  }
+
+  // ─── GOOGLE SHEETS LIVE SYNC ──────────────────────
+  async function syncFromGoogleSheets() {
+    resetLoaderUI();
+    setLoaderStatus('Syncing Google Sheets', 'Connecting to live Google Sheets data…');
+    setLoaderProgress(15);
+
+    if (window.location.protocol.startsWith('http')) {
+      // 1. Try server-side sync API (/api/sync)
+      try {
+        setLoaderStatus('Syncing Google Sheets', 'Running background sync…');
+        setLoaderProgress(30);
+        const syncRes = await fetch('/api/sync', { method: 'POST' });
+        if (syncRes.ok) {
+          const syncJson = await syncRes.json();
+          if (syncJson.success) {
+            setLoaderStatus('Syncing Google Sheets', 'Loading fresh dataset…');
+            setLoaderProgress(75);
+            districtCache = {};
+            await loadData(true);
+            showToast('🎉 Google Sheets dataset successfully refreshed!', 'success');
+            return;
+          }
+        }
+      } catch (e) {
+        console.log('/api/sync not reachable, trying /api/sheet proxy:', e);
+      }
+
+      // 2. Try proxy sheet fetch (/api/sheet with CORS)
+      try {
+        setLoaderStatus('Syncing Google Sheets', 'Streaming fresh data from Google Sheets…');
+        setLoaderProgress(40);
+        const sheetRes = await fetch('/api/sheet');
+        if (sheetRes.ok) {
+          const csvText = await sheetRes.text();
+          if (csvText && csvText.length > 500) {
+            setLoaderProgress(60);
+            await parseCsvAndProcess(csvText, pct => setLoaderProgress(60 + pct * 0.35));
+            setLoaderProgress(100);
+            hideLoader();
+            showToast(`✅ Synced and cached ${allData.length.toLocaleString()} records from Google Sheets!`, 'success');
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('Proxy sheet fetch failed:', e);
+      }
+
+      // 3. Try reading local data.csv
+      try {
+        setLoaderStatus('Loading CSV', 'Reading data.csv…');
+        const csvRes = await fetch(`data.csv?_=${Date.now()}`);
+        if (csvRes.ok) {
+          const csvText = await csvRes.text();
+          if (csvText && csvText.length > 500) {
+            setLoaderProgress(50);
+            await parseCsvAndProcess(csvText, pct => setLoaderProgress(50 + pct * 0.45));
+            setLoaderProgress(100);
+            hideLoader();
+            showToast(`✅ Loaded ${allData.length.toLocaleString()} records from data.csv`, 'success');
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('data.csv fetch failed:', e);
+      }
+    }
+
+    // Fallback: reload static data
+    await loadData(true);
+  }
+
   // ─── DATA LOADING ─────────────────────────────────
   async function loadData(forceRefresh = false) {
     resetLoaderUI();
@@ -312,6 +525,23 @@
         }
       } catch (err) {
         console.warn('Static data load error, trying fallback:', err);
+      }
+
+      // 1b. If static JSON fails, try loading data.csv directly
+      try {
+        const csvRes = await fetch('data.csv');
+        if (csvRes.ok) {
+          const csvText = await csvRes.text();
+          if (csvText && csvText.length > 500) {
+            await parseCsvAndProcess(csvText, pct => setLoaderProgress(20 + pct * 0.75));
+            setLoaderProgress(100);
+            hideLoader();
+            showToast(`✅ Loaded ${allData.length.toLocaleString()} records from data.csv`, 'success');
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('Direct data.csv load failed:', err);
       }
     }
 
@@ -1809,12 +2039,12 @@
     const pdfBtn = $('#export-pdf') || $('#btn-export-pdf');
     if (pdfBtn) pdfBtn.addEventListener('click', () => exportPDF());
 
-    // Refresh button
+    // Refresh button -> Sync from Google Sheets
     const btnRefresh = $('#btn-refresh-data') || $('#btn-refresh');
     if (btnRefresh) {
-      btnRefresh.addEventListener('click', () => {
+      btnRefresh.addEventListener('click', async () => {
         districtCache = {};
-        loadData(true);
+        await syncFromGoogleSheets();
       });
     }
 
@@ -1852,20 +2082,10 @@
           showToast('Reading local CSV…', 'info');
           const reader = new FileReader();
           reader.onload = async () => {
-            const lines = reader.result.split(/\r?\n/).filter(Boolean);
-            const headers = lines[0].split(',');
-            const rows = [];
-            for (let i = 1; i < lines.length; i++) {
-              const vals = lines[i].split(',');
-              const obj = {};
-              headers.forEach((h, idx) => { obj[h.trim()] = (vals[idx] || '').trim(); });
-              rows.push(obj);
-            }
-            allData = rows;
-            filteredData = allData;
-            renderTable();
+            const csvText = reader.result;
+            await parseCsvAndProcess(csvText, (pct) => setLoaderProgress(pct));
             hideLoader();
-            showToast(`Loaded ${rows.length} records`, 'success');
+            showToast(`Loaded ${allData.length.toLocaleString()} records`, 'success');
           };
           reader.readAsText(file);
         }
@@ -1873,7 +2093,18 @@
     }
 
     if (btnRetryLoad) {
-      btnRetryLoad.addEventListener('click', () => loadData(true));
+      btnRetryLoad.addEventListener('click', () => syncFromGoogleSheets());
+    }
+
+    if (btnUseCached) {
+      btnUseCached.addEventListener('click', async () => {
+        const cached = await getCached();
+        if (cached && cached.csv) {
+          await parseCsvAndProcess(cached.csv);
+          hideLoader();
+          showToast('Loaded from offline cache', 'info');
+        }
+      });
     }
   }
 

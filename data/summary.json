@@ -1,60 +1,94 @@
 {
   "version": "2.0.0",
-  "timestamp": "2026-09-24T09:52:20.206Z",
-  "totalContacts": 122016,
-  "totalRawRows": 215524,
-  "totalDistricts": 46,
-  "totalBlocks": 1791,
-  "totalDesignations": 312,
-  "femaleCount": 7032,
+  "timestamp": "2026-09-25T13:44:12.355Z",
+  "totalContacts": 148747,
+  "totalRawRows": 250442,
+  "totalDistricts": 80,
+  "totalBlocks": 1942,
+  "totalDesignations": 333,
+  "femaleCount": 7904,
   "filterOptions": {
     "districts": [
       "Araria",
+      "ARARIA",
       "Arwal",
+      "ARWAL",
       "Aurangabad",
+      "AURANGABAD",
       "Banka",
+      "BANKA",
       "Begusarai",
+      "BEGUSARAI",
       "Bhagalpur",
       "BHAGALPUR",
       "Bhojpur",
+      "BHOJPUR",
       "Buxar",
       "Darbhanga",
+      "DARBHANGA",
       "East Champaran",
+      "EAST CHAMPARAN",
       "Gaya",
+      "GAYA",
       "Gopalganj",
+      "GOPALGANJ",
       "Jamui",
+      "JAMUI",
       "Jehanabad",
       "Kaimur",
       "Katihar",
+      "KATIHAR",
       "Khagaria",
       "KHAGARIA",
       "Kishanganj",
+      "KISHANGANJ",
       "Lakhisarai",
+      "LAKHISARAI",
       "Madhepura",
+      "MADHEPURA",
       "Madhubani",
+      "MADHUBANI",
       "Munger",
+      "MUNGER",
       "Muzaffarpur",
+      "MUZAFFARPUR",
       "Nalanda",
+      "NALANDA",
       "Nawada",
+      "NAWADA",
       "Patna",
+      "Patna - Barh",
+      "Patna - Gramin",
       "Patna Gramin",
       "Patna Mahanagar",
       "Patna-Barh",
       "Purnea",
       "Purnia",
+      "PURNIA",
       "Rohtas",
+      "ROHTAS",
       "Saharsa",
+      "SAHARSA",
       "Samastipur",
+      "SAMASTIPUR",
       "Saran",
+      "SARAN",
       "Sarhasa",
       "Sheikhpura",
+      "SHEIKHPURA",
       "Sheohar",
       "Sitamarhi",
+      "SITAMARHI",
       "Siwan",
+      "SIWAN",
       "Supaul",
+      "SUPAUL",
+      "Unknown",
       "Vaishali",
+      "VAISHALI",
       "West champaran",
-      "West Champaran"
+      "West Champaran",
+      "WEST CHAMPARAN"
     ],
     "blocksByDistrict": {
       "Araria": [
@@ -99,6 +133,8 @@
         "kuchaiykote",
         "kuchayakot",
         "Kuchayakot",
+        "Kuchaykot",
+        "Majorganj",
         "Manjha",
         "Mirganj",
         "Muzaffarpur",
@@ -136,33 +172,42 @@
         "Bagaha 1",
         "Bagaha 2",
         "Bagaha NP",
+        "Bagha-I",
+        "Bagha-Ii",
         "Bairia",
         "Baria",
         "Bettiah",
         "Bettiah Municipal Corporation",
         "Bettiah Nagar",
+        "Bettiah Nagar Nigam",
         "Bettiah NN",
+        "Bhitaha",
         "Bhitahan",
         "Chanpatia",
         "Gaunaha",
         "jogapatti",
         "laurea",
+        "Lauria",
         "Lauriya",
         "Madhubani",
         "Mainatand",
+        "Mainatanr",
         "Majhaulia",
         "Majhauliya",
+        "Majhoulia",
         "Narkatiaganj",
         "Narkatiaganj NP",
         "Narkatiyaganj",
         "Nautan",
+        "Piparasi",
         "Piprasi",
         "Ramnagar",
         "Ramnagar NP",
         "Sikta",
         "Thakrahan",
         "Valmiki Nagar",
-        "Yogapatti"
+        "Yogapatti",
+        "Yogpatti"
       ],
       "Begusarai": [
         "Bachhwara",
@@ -170,6 +215,7 @@
         "Bakhari",
         "Bakhri",
         "Bakhri NP",
+        "Balia",
         "Balia NP",
         "Baliya",
         "ballia",
@@ -178,6 +224,7 @@
         "Ballia NP",
         "Barauni",
         "Barauni NP",
+        "Baruni",
         "Begusarai",
         "Begusarai NN",
         "BEgusarai NN",
@@ -190,6 +237,7 @@
         "chaudahi",
         "Chaurahi",
         "Cheria Bariarpur",
+        "Cheria Bariyarpur",
         "Cheria-Bariyarpur",
         "Cheriya Bariyarpur",
         "Chhaurahi",
@@ -202,6 +250,7 @@
         "Khodawandpur",
         "Khodawanpur",
         "Manjhaul",
+        "Manjhaulia",
         "Mansoorchak",
         "Mansurchak",
         "Matihani",
@@ -221,7 +270,9 @@
         "टेघरा"
       ],
       "Khagaria": [
+        "25 – Khagaria",
         "Alauli",
+        "Allauli",
         "Beldaur",
         "Beldour",
         "Chautham",
@@ -245,6 +296,7 @@
       ],
       "Lakhisarai": [
         "Barahiya",
+        "Bardhiya",
         "Barhahiya",
         "Chanan",
         "Channan",
@@ -293,13 +345,16 @@
         "Rosera",
         "Rosera Nagar Parisad",
         "Rosera NP",
+        "Rosra",
         "Samastipur",
         "Samastipur NN",
         "Sarainjan",
         "Sarairanjan",
         "Sararanjan",
         "Shahpur Patori",
+        "Shivaji Nagar",
         "Shivajinagar",
+        "Singhia",
         "Singhiya",
         "Singhiya NP",
         "Tajpur",
@@ -331,6 +386,7 @@
         "हसनपुर"
       ],
       "Saran": [
+        "Amnaur",
         "Amnour",
         "Baniapur",
         "baniyapur",
@@ -359,7 +415,9 @@
         "maker",
         "Maker",
         "Manjhi",
+        "Marauna",
         "Marhaura",
+        "Marhaurah",
         "mashrak",
         "Mashrakh",
         "Mashrakh NP",
@@ -401,9 +459,13 @@
       ],
       "Bhojpur": [
         "Agiaon",
+        "Agiwan",
         "Ara",
         "Ara NN",
+        "Ara Sadar",
+        "Arrah",
         "Arrah NN",
+        "Arrah Sadar",
         "Barhara",
         "Behea",
         "Belhar",
@@ -430,6 +492,7 @@
         "Suryagarha",
         "Tarapur",
         "Tarari",
+        "Udwantanagar",
         "Udwantnagar",
         "Ward 10",
         "अगिआंव",
@@ -455,12 +518,14 @@
         "Banjariya",
         "Bankatwa",
         "Chakia",
+        "Chakia (Pipra)",
         "Chakia NP",
         "Chakkia",
         "Chauradano",
         "chawradano",
         "Chawradano",
         "Chhawardano",
+        "Chhordano",
         "Chiraia",
         "Chiraiya",
         "Chiraya",
@@ -468,6 +533,7 @@
         "fenhara",
         "Ghodasahan",
         "Ghodasana",
+        "Ghorasahan",
         "Govindganj",
         "Harsiddhi",
         "Harsidhi",
@@ -486,6 +552,7 @@
         "Pakdidayal",
         "Pakridayal",
         "PakriDayal",
+        "Pakridyal",
         "Patahi",
         "Phenhara",
         "Pipra",
@@ -494,10 +561,14 @@
         "Ramgarhwa",
         "Raxaul",
         "Sangrampur",
+        "Sikarahna",
         "Sikarhana",
+        "Sikhrahna",
+        "Sikrahna",
         "sugauli",
         "Sugauli",
         "tetaria",
+        "Tetaria",
         "Tetariya",
         "Turkaulia",
         "Turkauliya",
@@ -532,9 +603,11 @@
         "हरसिद्धि"
       ],
       "Madhubani": [
+        "Andharathadhi",
         "Andharathadi",
         "Andhratharhi",
         "andhrathari",
+        "Babubarahi",
         "babubarhi",
         "Babubarhi",
         "Baburahi",
@@ -558,15 +631,18 @@
         "Khutauna",
         "Ladania",
         "Ladaniya",
+        "Lakhanaur",
         "Lakhnaur",
         "Lakhnore",
         "Lakhnour",
         "Laukaha",
         "Laukaha (Khutauna)",
         "Laukahi",
+        "Laukhi",
         "Madhapur",
         "Madhawapur",
         "Madhepur",
+        "Madhepura",
         "Madhubani",
         "Madhubani Nagar",
         "Madhubani Nn",
@@ -619,6 +695,7 @@
         "Daronda",
         "Darundha",
         "Gopalganj",
+        "Goreakothi",
         "Goreyakoti",
         "Goriakothi",
         "Goriyakothi",
@@ -626,6 +703,7 @@
         "guthni",
         "Guthni",
         "Hasanpura",
+        "Husainganj",
         "Hussainganj",
         "Jiradei",
         "Lakdanbiganj",
@@ -674,6 +752,7 @@
         "Akbarpur",
         "Dinara",
         "Gobindpur",
+        "Govindpur",
         "Hisua",
         "Hisua NP",
         "Kargahar",
@@ -685,8 +764,11 @@
         "Nardiganj",
         "Narhat",
         "Nawada",
+        "Nawada Nagar Parishad",
         "Nawada NP",
+        "Nawada Sadar",
         "Pakri Barawan",
+        "Pakri Barwan",
         "Pakribarawan",
         "Pakribarwa",
         "Rajauli",
@@ -751,10 +833,12 @@
         "Singheshwar",
         "Singheswar",
         "Sonbarsha",
+        "Uda Kishanganj",
         "uda kishunganj",
         "Uda kishunganj",
         "Uda Kishunganj",
         "Uda Kishunganj NP",
+        "Udakishangunj",
         "udakishunganj",
         "Udakishunganj",
         "Udakishunganj NP",
@@ -798,8 +882,10 @@
         "Bochaha",
         "bochahan",
         "Bochahan",
+        "Bochhan",
         "every",
         "Gaighat",
+        "Gayghat",
         "Jale",
         "Kanti",
         "Katra",
@@ -809,6 +895,7 @@
         "Kurhani",
         "Kurnahi",
         "madvan",
+        "Madwan",
         "Marwan",
         "Meenapur",
         "Minapur",
@@ -823,6 +910,9 @@
         "Muzaffarpur Nagar",
         "Muzaffarpur Nagar Nigam",
         "Muzaffarpur NN",
+        "Muzaffarpur Paschimi",
+        "Muzaffarpur Purvi",
+        "Muzaffarpur West",
         "Nagar Nigam",
         "Paroo",
         "Paru",
@@ -851,6 +941,7 @@
         "Banama Itāhari",
         "Banama Ithari",
         "Banma Itahari",
+        "Banma Itahri",
         "banma ithari",
         "Banma Ithari",
         "Banma Itihari",
@@ -867,6 +958,7 @@
         "Saharsa",
         "Saharsa Nagar Nigam",
         "Saharsa NN",
+        "Saharsa Sadar",
         "salkhua",
         "Salkhua",
         "Salkuha",
@@ -905,16 +997,21 @@
         "Nanpur",
         "Parihar",
         "Parsauni",
+        "Puppri",
         "Pupri",
+        "Rega",
         "Riga",
         "RUNNI SAIDPUR UTTAR",
         "runnisaidpur",
         "Runnisaidpur",
+        "Sadar",
         "Sitamarhi",
         "Sitamarhi Nagar Nigam",
+        "Sitamarhi Sadar",
         "Sonbarsa",
         "Suppi",
         "Sursand",
+        "Tariyani",
         "चरौत",
         "डुमरा",
         "नानपुर",
@@ -934,6 +1031,7 @@
         "सोनबरसा"
       ],
       "Katihar": [
+        "67-Manihari (ST)",
         "Ahmedabad",
         "Amdabad",
         "Azamnagar",
@@ -949,6 +1047,7 @@
         "falka",
         "Falka",
         "Hasanganj",
+        "Hasangunj",
         "Kadva",
         "Kadwa",
         "Kathar",
@@ -956,6 +1055,7 @@
         "Katihar Nagar Nigam",
         "Katihar NN",
         "Kirora",
+        "Kodha",
         "Korha",
         "Kursela",
         "Manihari",
@@ -1041,16 +1141,19 @@
       ],
       "Supaul": [
         "Basantpur",
+        "Birpur",
         "Chatapur",
         "Chhatapur",
         "Kishanpur",
         "Marauna",
+        "Marouna",
         "Nirmali",
         "Pipra",
         "Pratapganj",
         "Raghopur",
         "Saraigarh Bhaptiyahi",
         "Supaul",
+        "Supaul Sadar",
         "Triveniganj",
         "किशनपुर",
         "छातापुर",
@@ -1069,6 +1172,7 @@
         "Arwal",
         "Barhat",
         "chakai",
+        "Chakai",
         "Chakia",
         "Dehri",
         "Dhoraiya",
@@ -1124,6 +1228,7 @@
         "Jandaha",
         "Lalganj",
         "Lalganj Nagar Panchayat",
+        "Mahanar",
         "Mahnar",
         "Mahua",
         "Mahua NP",
@@ -1199,6 +1304,7 @@
         "रामपुर"
       ],
       "Bhagalpur": [
+        "Bhagalpur",
         "Bhagalpur nagar nigam",
         "Bhagalpur NN",
         "Bihpur",
@@ -1209,6 +1315,7 @@
         "Jagdishpur",
         "Kahalgaon",
         "Kharik",
+        "Lailakh",
         "Nagar Nigam",
         "Narayanpur",
         "Naryanpur",
@@ -1219,14 +1326,17 @@
         "Naugachia",
         "Naugachia NP",
         "Navagachiya",
+        "Navgachhiya",
         "Parbatta",
         "Pirpainti",
+        "Rangarachauk",
         "Rangra Chowk",
         "Rangrachowk",
         "Sabor",
         "sabour",
         "Sabour",
         "Sanhaula",
+        "Sanhola",
         "Shahkund",
         "Shakhund",
         "Sultanganj",
@@ -1261,6 +1371,7 @@
         "Ekangarsarai",
         "Giriak",
         "Giriyak",
+        "Harnaout",
         "Harnaut",
         "Harnout",
         "Harnuat",
@@ -1277,6 +1388,7 @@
         "Nagarnusha",
         "Noorsarai",
         "Parbalpur",
+        "Parwalpur",
         "Rahui",
         "Rajgir",
         "Rajgir NP",
@@ -1313,6 +1425,7 @@
         "Fullidumer",
         "Katoria",
         "Katoriya",
+        "Phulleedumar",
         "Rajaun",
         "Rajoun",
         "Sambhuganj",
@@ -1338,6 +1451,7 @@
         "Brahampur",
         "Daudnagar",
         "Deo",
+        "Dev",
         "goh",
         "Goh",
         "Haspura",
@@ -1347,11 +1461,14 @@
         "Kutumbha",
         "Madanpur",
         "Nabinagar",
+        "Nawinagar",
         "Obra",
         "Rafiganj",
         "Rafigunj",
+        "Rafiqanj",
         "Shahpur",
         "Tarari",
+        "Varun",
         "ओबरा",
         "औरंगाबाद",
         "कुटुम्ब",
@@ -1383,18 +1500,22 @@
         "Ghanshaympur",
         "Ghanshyampur",
         "Hanuman Nagar",
+        "Hanumannagar",
         "Harlakhi",
         "Hayaghat",
         "HAYAGHAT",
         "Jale",
         "JALE",
         "Keoti",
+        "Keoti Runway",
+        "Kevti",
         "Kiratpur",
         "Kusheshwar Ashthan",
         "Kusheshwar Asthan",
         "Kusheshwar Asthan east",
         "Kusheshwar Asthan East",
         "Kusheshwar Sthan",
+        "Kusheshwar Sthan East",
         "Kusheswar Asthan East",
         "Kushweshar Ashtan",
         "Mahishi",
@@ -1434,8 +1555,10 @@
         "Dharahara",
         "Dharhara",
         "Dhauraiya",
+        "Haveli Khadgapur",
         "Haveli Kharagpur Nagar Parishad",
         "Haveli Kharagpur NP",
+        "Haweli Kharagpur",
         "Jamalpur",
         "Jamalpur Nagar Parishad",
         "Jamalpur NP",
@@ -1476,6 +1599,7 @@
         "Dumraon",
         "Dumraon Nagar Parishad",
         "Dumraon NP",
+        "Itahri",
         "Itarhi",
         "Ithari",
         "Kesath",
@@ -1514,11 +1638,13 @@
         "Kasba",
         "Katihar",
         "Krityanand Nagar",
+        "Purnea East",
         "Purnea Nagar Nigam",
         "Purnea NN",
         "Purnia",
         "Purnia East",
         "Purnia NN",
+        "Purnia sadar",
         "Rupauli",
         "Srinagar"
       ],
@@ -1642,6 +1768,7 @@
         "Karaghar",
         "Karahgar",
         "Karakat",
+        "Karakath",
         "Kargahar",
         "Karghar",
         "Kochas",
@@ -1727,8 +1854,10 @@
         "Amas",
         "Atri",
         "Banke Bazar",
+        "Bankebazar",
         "Bankey Bazaar",
         "Barachatti",
+        "Barahiya",
         "belaganj",
         "Belaganj",
         "Bhabua",
@@ -1744,14 +1873,17 @@
         "Dumariya",
         "Dumraon",
         "Fatehpur",
+        "Gaya Nagar Nigam",
         "Gaya NN",
         "Gaya Sadar",
+        "GAYA SADAR",
         "Gaya Town",
         "Guraru",
         "Gurua",
         "Hamzapur",
         "Hisua",
         "Imamganj",
+        "Khijarsarai",
         "Khizar Sarai",
         "Khizarsarai",
         "Khizersarai",
@@ -1762,6 +1894,7 @@
         "Mohanpur",
         "Mohra",
         "Naugacchia NP",
+        "Neemchak",
         "Neemchak Bathani",
         "NN",
         "Paraiya",
@@ -1771,6 +1904,7 @@
         "Shakund NP",
         "Shergahti Nagar Parishad",
         "Sherghati",
+        "Sherghatty",
         "Sherghaty",
         "Sherghaty NP",
         "tankuppa",
@@ -1803,9 +1937,11 @@
       "Sheikhpura": [
         "Ariari",
         "Barbigha",
+        "chewara",
         "Chewara",
         "Ghat Kusumba",
         "Ghat Kusumbha",
+        "Ghatkushumba",
         "Ghatkusumba",
         "Lakhisarai",
         "Sheikhopur Sarai",
@@ -1830,7 +1966,9 @@
         "Sultanganj"
       ],
       "Patna Mahanagar": [
+        "Khusrupur",
         "NN",
+        "Patna Sadar",
         "Ward 1",
         "Ward 10",
         "Ward 11",
@@ -1936,10 +2074,93 @@
         "Mainatand",
         "Majhaulia",
         "Narkatiaganj",
+        "Narkatiyaganj",
         "Ramnagar",
         "Valmiki Nagar",
+        "Valmikinagar",
         "Yogapatti"
-      ]
+      ],
+      "Patna - Gramin": [
+        "Bihta",
+        "Bikram",
+        "Danapur",
+        "Danapur NP",
+        "Dhanarua",
+        "Dulhin Bazar",
+        "Fathua",
+        "Fathua NP",
+        "Fatuha",
+        "Khagaul",
+        "Khagaul NP",
+        "Maner",
+        "Maner NP",
+        "Masaurhi",
+        "Masaurhi NP",
+        "Naubatpur",
+        "Paliganj",
+        "Patna Sadar",
+        "Phulwari",
+        "Phulwari Sharif",
+        "Phulwarisarif",
+        "Punpun",
+        "Sampatchak"
+      ],
+      "Patna - Barh": [
+        "Athamalgola",
+        "Athmalgola",
+        "Bakhtiarpur",
+        "Bakhtiyarpur",
+        "Bakhtiyarpur  NP",
+        "Bakhtiyarpur NP",
+        "Barh",
+        "Barh NP",
+        "Belchchi",
+        "Belchhi",
+        "Daniyawan",
+        "Ghoswari",
+        "Khushrupur",
+        "Khusrupur",
+        "Mokama",
+        "Mokama NP",
+        "NN",
+        "Paliganj",
+        "Pandarak",
+        "Pandark",
+        "Punpun",
+        "Ward -"
+      ],
+      "WEST CHAMPARAN": [],
+      "EAST CHAMPARAN": [],
+      "GOPALGANJ": [],
+      "SIWAN": [],
+      "SARAN": [],
+      "VAISHALI": [],
+      "SAMASTIPUR": [],
+      "BEGUSARAI": [],
+      "BANKA": [],
+      "MUNGER": [],
+      "LAKHISARAI": [],
+      "SHEIKHPURA": [],
+      "NALANDA": [],
+      "BHOJPUR": [],
+      "ROHTAS": [],
+      "ARWAL": [],
+      "AURANGABAD": [],
+      "GAYA": [],
+      "NAWADA": [],
+      "JAMUI": [],
+      "SITAMARHI": [],
+      "MADHUBANI": [],
+      "SUPAUL": [],
+      "ARARIA": [],
+      "KISHANGANJ": [],
+      "PURNIA": [],
+      "KATIHAR": [],
+      "MADHEPURA": [],
+      "SAHARSA": [],
+      "DARBHANGA": [],
+      "MUZAFFARPUR": [],
+      "Unknown": []
     },
     "categories": [
       "0BC",
@@ -2105,6 +2326,7 @@
       "Naai",
       "Nagar",
       "Nai",
+      "Narkatiyaganj",
       "Nishad",
       "Nonia",
       "Noniya",
@@ -2891,6 +3113,7 @@
       "Barber",
       "Barhahmin",
       "Barhai",
+      "Barhaman",
       "Barhamin",
       "Barhariya",
       "Barhi",
@@ -2921,6 +3144,7 @@
       "Been",
       "Beend",
       "behaliya",
+      "Behrihar",
       "Behriihar",
       "Beldar",
       "Bengali",
@@ -3131,6 +3355,7 @@
       "Chandrvanshi",
       "Chandrvansi",
       "Chandrwanshi",
+      "Chandrwansi",
       "Chanmar",
       "Channy",
       "Chanrdrwansi",
@@ -3247,6 +3472,7 @@
       "Desadh",
       "Deshia Rajvanshi",
       "Deshiya (Rajvanshi)",
+      "Desia Rajvanshi",
       "Desiya",
       "Devahar",
       "Devhar",
@@ -3443,6 +3669,7 @@
       "General",
       "Genral",
       "Ghasi",
+      "Ghatera",
       "Ghatwal",
       "Ghatwar",
       "Ghodi",
@@ -3492,6 +3719,7 @@
       "Gurhi",
       "Haadi",
       "Haari",
+      "Haider",
       "Hajam",
       "Hajjam",
       "Haluai",
@@ -3684,13 +3912,17 @@
       "Kathbaniya",
       "Katihar",
       "Kaulhaiya",
+      "Kaun",
       "Kauri",
       "Kavar",
+      "Kavat",
+      "kavlat",
       "Kayasat",
       "Kayasht",
       "Kayashth",
       "kayashtha",
       "Kayashtha",
+      "kayast",
       "Kayast",
       "kayasth",
       "Kayasth",
@@ -3727,6 +3959,7 @@
       "KESHARWANI BANIYA",
       "Keshri",
       "Kesri",
+      "Ketav",
       "Kevarat",
       "Kevart",
       "KEVART",
@@ -3885,12 +4118,14 @@
       "Kumrmi",
       "Kunjara",
       "Kunjra",
+      "Kurariyar",
       "Kurbe",
       "Kuriyar",
       "kurmi",
       "Kurmi",
       "KUrmi",
       "KURMI",
+      "Kurmi\n\n-",
       "Kurmi (OBC)",
       "Kurmi Mandal",
       "Kurmi,",
@@ -4002,6 +4237,7 @@
       "Mali (Malakar)",
       "Mali (Malakkar)",
       "Malik",
+      "Malik(Dom)",
       "Malkar",
       "Malla",
       "Mallaah",
@@ -4076,6 +4312,7 @@
       "Miriyasin",
       "Miryasin",
       "mishra",
+      "Mishra",
       "Mistri",
       "Mjuslim",
       "MLA Constestant\n\n-Former MLA Contestant, 2020, Nautan, RLSP, Got 6500 Votes, 2009 By Election, RLSP, Nautan, 6000 Votes\n-Former Mukhiya Contestant, 2001\n-Former Defacto Panchayat Samiti member(2006 To 2011)\n-Former JDU Pradesh Upadhyaksh(2018 To 2021)\n-Jan Suraaj Pradesh Mahaschiv",
@@ -4460,6 +4697,7 @@
       "Rangreza",
       "Raniyar",
       "Ranjan",
+      "Raput",
       "Rauniar",
       "Rauniyaar",
       "Rauniyar",
@@ -4562,6 +4800,7 @@
       "saiyyad",
       "Samari Vaishya",
       "Samri Vaishya",
+      "Sangh",
       "Sangrampur",
       "Sanithwar",
       "Sanjeev Kumar practising Advocate in the Purnea Bar Association.",
@@ -4610,6 +4849,7 @@
       "Sersawadi",
       "Sersawdi",
       "sershabadi",
+      "Sesawadi",
       "Sethvar",
       "Sethwar",
       "shah",
@@ -4936,6 +5176,7 @@
       "YadaV",
       "YAdav",
       "YADAV",
+      "Yadav\n\n-",
       "Yadav\n-Jansuraaj Block Vice President\n-Prominent Businessman ( SKYRL Pvt Limited, Tranposrt & Building Material)\n-Prominent farmer ( 30 Acre Land)\n-Member of Vihangam Yog Sandesh\n-Social Worker ( Helping Poor Girls for their marriages & Education)",
       "Yadav .",
       "Yadav (Gwala, Ahir, Gope, Sadgope)",
@@ -5035,35 +5276,70 @@
       "हजरा"
     ],
     "genders": [
+      "0",
+      "08/05/2024",
+      "20",
+      "21",
+      "22",
+      "23",
+      "24",
+      "25",
       "26",
+      "27",
+      "28",
+      "29",
+      "30",
       "31",
       "32",
+      "33",
       "34",
+      "35",
+      "36",
+      "37",
       "38",
       "39",
       "40",
+      "41",
       "42",
+      "4200.00%",
       "43",
       "44",
       "45",
+      "46",
       "47",
       "48",
+      "49",
       "50",
       "51",
       "52",
       "53",
       "54",
+      "55",
       "56",
       "57",
+      "58",
       "59",
       "60",
       "61",
       "62",
+      "63",
       "64",
+      "65",
+      "66",
+      "67",
       "68",
+      "69",
       "70",
+      "71",
+      "72",
       "73",
+      "74",
       "75",
+      "76",
+      "77",
+      "78",
+      "79",
+      "80",
       "Adhivasi",
       "Afzalpur dhobghatti",
       "Allouli Nagar Panchayat",
@@ -5263,14 +5539,20 @@
       "Abhiyan Samiti adhyaksh",
       "Abhiyan Samiti Member",
       "Abhiyan Samiti Sadasya",
+      "Abhiyan Samiti sanyojak",
       "Abhiyan Samiti Sanyojak",
       "Abhiyan Sangogak",
       "ACC",
       "AS Sanyojak",
+      "Block Co-Ordinator",
+      "Block Commitee Member",
+      "Block Cordinator",
       "Block Prabhari",
       "Block Vice - President",
+      "Bsc - Member",
       "Bsc Member",
       "BSC Member",
+      "BSC-Member",
       "Chief Spokeperson",
       "Chief Spokeperson and Vice President",
       "Chief Spokesperson",
@@ -5294,8 +5576,10 @@
       "Kisan Adhyaksha",
       "Mahila Adhyaksh",
       "Mahila Adhyaksha",
+      "Member",
       "Mukhya Pravkata",
       "Mukhya Pravkata/Upadhyaksh",
+      "NA",
       "Nagar Abhiyaaan Samiti Member",
       "Nagar Abhiyaaan Samiti Sanyojak",
       "Nagar Abhiyan Samitee Member",
@@ -5312,6 +5596,7 @@
       "Nagar Upadhykash",
       "Nagar Yuva Adhyaksh",
       "Nargar Kisan Adhyaksh",
+      "Office bearer",
       "Office Incharge",
       "Panchayat President",
       "Prakahand Social Media Incharge",
@@ -5337,9 +5622,12 @@
       "Prakhand Abhiyaan Member",
       "Prakhand Abhiyaan Samiti  Member",
       "Prakhand Abhiyaan Samiti  sanyojak",
+      "prakhand abhiyaan samiti member",
+      "Prakhand abhiyaan samiti member",
       "Prakhand Abhiyaan Samiti Member",
       "Prakhand Abhiyaan samiti sadasya",
       "Prakhand Abhiyaan samiti Sadasya",
+      "prakhand abhiyaan samiti sadsya",
       "Prakhand Abhiyaan Samiti Sadsya",
       "Prakhand Abhiyaan Samiti Sahyojak",
       "Prakhand Abhiyaan samiti sanyojak",
@@ -5352,7 +5640,9 @@
       "Prakhand Abhiyan Samati Sadasya",
       "Prakhand Abhiyan Samati Sanyojak",
       "Prakhand Abhiyan samiti  Sanyojak",
+      "Prakhand Abhiyan Samiti Convenor",
       "Prakhand abhiyan samiti Member",
+      "Prakhand Abhiyan samiti Member",
       "Prakhand Abhiyan Samiti member",
       "Prakhand Abhiyan Samiti Member",
       "Prakhand Abhiyan samiti sadasya",
@@ -5463,8 +5753,10 @@
       "Prakhand Upadhyakash / Prakhand mukh pravakta",
       "Prakhand upadhyaksh",
       "Prakhand Upadhyaksh",
+      "Prakhand Upadhyaksh / Mukhya Pravakta",
       "Prakhand Upadhyaksh / Prakhand Mukhya Pravakta",
       "Prakhand Upadhyaksh Adhyaksh",
+      "Prakhand upadhyaksh/Mukhay Pravkta",
       "Prakhand Upadhyash/ Mukhya Prwakta",
       "Prakhand Upadhyksh",
       "Prakhand Upadyaksh",
@@ -5520,6 +5812,9 @@
       "Spokesperson",
       "Spokesperson - Block",
       "SSC-Member",
+      "State Committee",
+      "State Core Committee",
+      "Upadhyaksh",
       "Vice president",
       "Vice President",
       "Vice President & Chief Spokesperson",
@@ -5527,6 +5822,7 @@
       "Vice President/chief spokesperson",
       "Vice President/Chief spokesperson",
       "Vice President/Chief Spokesperson",
+      "Vidhan Sabha Prabhari",
       "Ward Adhykash",
       "Women President",
       "Youth President",
@@ -5545,6 +5841,7 @@
       "Zila Mukhya Pravakta",
       "Zila Mukhya Pravkta",
       "Zila Prabhari",
+      "Zila Pravakta",
       "Zila Sachiv",
       "Zila Sanrakshak",
       "Zila Upadhayaksh",
@@ -5700,6 +5997,7 @@
       "Parbatta",
       "Paschimi",
       "Patepur",
+      "Patna City",
       "Patna sadar",
       "Patna Sadar",
       "Patna Sahib",
@@ -5777,187 +6075,187 @@
       {
         "district": "East Champaran",
         "slug": "east_champaran",
-        "count": 8498
-      },
-      {
-        "district": "Samastipur",
-        "slug": "samastipur",
-        "count": 6605
+        "count": 14664
       },
       {
         "district": "Saran",
         "slug": "saran",
-        "count": 6545
+        "count": 11530
       },
       {
         "district": "Siwan",
         "slug": "siwan",
-        "count": 5815
-      },
-      {
-        "district": "Darbhanga",
-        "slug": "darbhanga",
-        "count": 5753
-      },
-      {
-        "district": "Madhubani",
-        "slug": "madhubani",
-        "count": 5738
+        "count": 10206
       },
       {
         "district": "West Champaran",
         "slug": "west_champaran",
-        "count": 5603
+        "count": 9877
       },
       {
-        "district": "Begusarai",
-        "slug": "begusarai",
-        "count": 5434
-      },
-      {
-        "district": "Sitamarhi",
-        "slug": "sitamarhi",
-        "count": 5397
-      },
-      {
-        "district": "Muzaffarpur",
-        "slug": "muzaffarpur",
-        "count": 5334
+        "district": "Samastipur",
+        "slug": "samastipur",
+        "count": 6779
       },
       {
         "district": "Vaishali",
         "slug": "vaishali",
-        "count": 4492
+        "count": 5914
+      },
+      {
+        "district": "Madhubani",
+        "slug": "madhubani",
+        "count": 5868
+      },
+      {
+        "district": "Darbhanga",
+        "slug": "darbhanga",
+        "count": 5817
+      },
+      {
+        "district": "Begusarai",
+        "slug": "begusarai",
+        "count": 5674
+      },
+      {
+        "district": "Sitamarhi",
+        "slug": "sitamarhi",
+        "count": 5448
+      },
+      {
+        "district": "Muzaffarpur",
+        "slug": "muzaffarpur",
+        "count": 5424
       },
       {
         "district": "Gopalganj",
         "slug": "gopalganj",
-        "count": 4353
+        "count": 4419
       },
       {
         "district": "Purnia",
         "slug": "purnia",
-        "count": 4189
+        "count": 4320
       },
       {
         "district": "Katihar",
         "slug": "katihar",
-        "count": 4101
+        "count": 4167
       },
       {
         "district": "Bhagalpur",
         "slug": "bhagalpur",
-        "count": 3796
+        "count": 3920
       },
       {
         "district": "Madhepura",
         "slug": "madhepura",
-        "count": 3687
+        "count": 3731
       },
       {
         "district": "Saharsa",
         "slug": "saharsa",
-        "count": 3053
+        "count": 3182
       },
       {
         "district": "Bhojpur",
         "slug": "bhojpur",
-        "count": 2773
-      },
-      {
-        "district": "Araria",
-        "slug": "araria",
-        "count": 2607
+        "count": 3045
       },
       {
         "district": "Nawada",
         "slug": "nawada",
-        "count": 2524
+        "count": 2799
+      },
+      {
+        "district": "Araria",
+        "slug": "araria",
+        "count": 2754
       },
       {
         "district": "Nalanda",
         "slug": "nalanda",
-        "count": 2486
+        "count": 2626
       },
       {
         "district": "Supaul",
         "slug": "supaul",
-        "count": 2132
-      },
-      {
-        "district": "Kishanganj",
-        "slug": "kishanganj",
-        "count": 2022
+        "count": 2162
       },
       {
         "district": "Gaya",
         "slug": "gaya",
-        "count": 1944
+        "count": 2155
       },
       {
-        "district": "Banka",
-        "slug": "banka",
-        "count": 1898
+        "district": "Kishanganj",
+        "slug": "kishanganj",
+        "count": 2069
       },
       {
         "district": "Aurangabad",
         "slug": "aurangabad",
-        "count": 1779
+        "count": 2046
+      },
+      {
+        "district": "Banka",
+        "slug": "banka",
+        "count": 1940
       },
       {
         "district": "Khagaria",
         "slug": "khagaria",
-        "count": 1767
-      },
-      {
-        "district": "Munger",
-        "slug": "munger",
-        "count": 1760
+        "count": 1883
       },
       {
         "district": "Lakhisarai",
         "slug": "lakhisarai",
-        "count": 1662
+        "count": 1871
+      },
+      {
+        "district": "Munger",
+        "slug": "munger",
+        "count": 1800
       },
       {
         "district": "Rohtas",
         "slug": "rohtas",
-        "count": 1443
-      },
-      {
-        "district": "Jamui",
-        "slug": "jamui",
-        "count": 1252
+        "count": 1730
       },
       {
         "district": "Kaimur",
         "slug": "kaimur",
-        "count": 1147
+        "count": 1416
+      },
+      {
+        "district": "Jamui",
+        "slug": "jamui",
+        "count": 1302
       },
       {
         "district": "Sheikhpura",
         "slug": "sheikhpura",
-        "count": 824
-      },
-      {
-        "district": "Sheohar",
-        "slug": "sheohar",
-        "count": 663
+        "count": 979
       },
       {
         "district": "Buxar",
         "slug": "buxar",
-        "count": 523
+        "count": 806
       },
       {
         "district": "Jehanabad",
         "slug": "jehanabad",
-        "count": 484
+        "count": 728
+      },
+      {
+        "district": "Sheohar",
+        "slug": "sheohar",
+        "count": 721
       },
       {
         "district": "Arwal",
         "slug": "arwal",
-        "count": 479
+        "count": 555
       },
       {
         "district": "Patna Gramin",
@@ -5965,14 +6263,14 @@
         "count": 340
       },
       {
+        "district": "Patna Mahanagar",
+        "slug": "patna_mahanagar",
+        "count": 339
+      },
+      {
         "district": "Patna-Barh",
         "slug": "patna_barh",
         "count": 300
-      },
-      {
-        "district": "Patna Mahanagar",
-        "slug": "patna_mahanagar",
-        "count": 287
       },
       {
         "district": "Purnea",
@@ -5982,7 +6280,17 @@
       {
         "district": "West champaran",
         "slug": "west_champaran",
-        "count": 94
+        "count": 229
+      },
+      {
+        "district": "Patna - Gramin",
+        "slug": "patna_gramin",
+        "count": 207
+      },
+      {
+        "district": "Patna - Barh",
+        "slug": "patna_barh",
+        "count": 95
       },
       {
         "district": "Patna",
@@ -5992,7 +6300,57 @@
       {
         "district": "BHAGALPUR",
         "slug": "bhagalpur",
-        "count": 39
+        "count": 59
+      },
+      {
+        "district": "MADHUBANI",
+        "slug": "madhubani",
+        "count": 31
+      },
+      {
+        "district": "DARBHANGA",
+        "slug": "darbhanga",
+        "count": 31
+      },
+      {
+        "district": "SAMASTIPUR",
+        "slug": "samastipur",
+        "count": 29
+      },
+      {
+        "district": "EAST CHAMPARAN",
+        "slug": "east_champaran",
+        "count": 27
+      },
+      {
+        "district": "SIWAN",
+        "slug": "siwan",
+        "count": 26
+      },
+      {
+        "district": "SARAN",
+        "slug": "saran",
+        "count": 26
+      },
+      {
+        "district": "BEGUSARAI",
+        "slug": "begusarai",
+        "count": 24
+      },
+      {
+        "district": "KHAGARIA",
+        "slug": "khagaria",
+        "count": 23
+      },
+      {
+        "district": "VAISHALI",
+        "slug": "vaishali",
+        "count": 23
+      },
+      {
+        "district": "MUZAFFARPUR",
+        "slug": "muzaffarpur",
+        "count": 21
       },
       {
         "district": "Sarhasa",
@@ -6000,210 +6358,340 @@
         "count": 20
       },
       {
-        "district": "KHAGARIA",
-        "slug": "khagaria",
-        "count": 16
+        "district": "BHOJPUR",
+        "slug": "bhojpur",
+        "count": 19
+      },
+      {
+        "district": "WEST CHAMPARAN",
+        "slug": "west_champaran",
+        "count": 18
+      },
+      {
+        "district": "ROHTAS",
+        "slug": "rohtas",
+        "count": 17
+      },
+      {
+        "district": "GAYA",
+        "slug": "gaya",
+        "count": 15
+      },
+      {
+        "district": "NALANDA",
+        "slug": "nalanda",
+        "count": 13
+      },
+      {
+        "district": "SITAMARHI",
+        "slug": "sitamarhi",
+        "count": 13
+      },
+      {
+        "district": "KATIHAR",
+        "slug": "katihar",
+        "count": 12
+      },
+      {
+        "district": "BANKA",
+        "slug": "banka",
+        "count": 11
+      },
+      {
+        "district": "AURANGABAD",
+        "slug": "aurangabad",
+        "count": 11
+      },
+      {
+        "district": "ARARIA",
+        "slug": "araria",
+        "count": 11
+      },
+      {
+        "district": "PURNIA",
+        "slug": "purnia",
+        "count": 9
+      },
+      {
+        "district": "JAMUI",
+        "slug": "jamui",
+        "count": 8
+      },
+      {
+        "district": "GOPALGANJ",
+        "slug": "gopalganj",
+        "count": 7
+      },
+      {
+        "district": "MUNGER",
+        "slug": "munger",
+        "count": 7
+      },
+      {
+        "district": "LAKHISARAI",
+        "slug": "lakhisarai",
+        "count": 7
+      },
+      {
+        "district": "SUPAUL",
+        "slug": "supaul",
+        "count": 6
+      },
+      {
+        "district": "SAHARSA",
+        "slug": "saharsa",
+        "count": 6
+      },
+      {
+        "district": "ARWAL",
+        "slug": "arwal",
+        "count": 5
+      },
+      {
+        "district": "NAWADA",
+        "slug": "nawada",
+        "count": 5
+      },
+      {
+        "district": "MADHEPURA",
+        "slug": "madhepura",
+        "count": 5
+      },
+      {
+        "district": "SHEIKHPURA",
+        "slug": "sheikhpura",
+        "count": 3
+      },
+      {
+        "district": "KISHANGANJ",
+        "slug": "kishanganj",
+        "count": 3
+      },
+      {
+        "district": "Unknown",
+        "slug": "unknown",
+        "count": 1
       }
     ],
     "categories": [
       [
         "EBC",
-        24925
+        30468
       ],
       [
         "OBC",
-        24054
+        29342
       ],
       [
         "General",
-        21634
+        26462
       ],
       [
         "SC",
-        17366
+        20949
       ],
       [
         "Minority",
-        14485
+        17464
       ],
       [
         "Gen",
-        2374
+        3600
       ],
       [
         "ST",
-        1279
+        1697
+      ],
+      [
+        "GEN",
+        910
       ],
       [
         "BSC Member",
         798
       ],
       [
-        "GEN",
-        601
-      ],
-      [
         "Muslim",
-        215
+        278
       ],
       [
         "Male",
-        167
+        183
       ],
       [
         "Sc",
-        156
+        179
       ],
       [
         "Yadav",
-        83
+        98
       ],
       [
         "Rajput",
-        73
+        97
       ],
       [
         "obc",
-        73
+        92
       ],
       [
         "sc",
-        67
+        90
       ],
       [
         "Brahmin",
-        61
-      ],
-      [
-        "Ebc",
-        54
+        70
       ],
       [
         "Minorty",
-        50
+        63
+      ],
+      [
+        "Genral",
+        60
+      ],
+      [
+        "Ebc",
+        58
+      ],
+      [
+        "Gen.",
+        52
       ],
       [
         "Prakhand Upadhyaksh",
         47
       ],
       [
-        "Gen.",
-        46
-      ],
-      [
         "DSC",
         46
       ],
       [
-        "Genral",
-        44
-      ],
-      [
         "Teli",
-        38
-      ],
-      [
-        "MINORITY",
-        34
-      ],
-      [
-        "ebc",
-        34
+        45
       ],
       [
         "Mallah",
-        28
+        45
+      ],
+      [
+        "ebc",
+        41
+      ],
+      [
+        "MINORITY",
+        39
       ],
       [
         "MInority",
-        28
-      ],
-      [
-        "Obc",
-        27
-      ],
-      [
-        "Kushwaha",
-        25
-      ],
-      [
-        "Dusadh",
-        22
-      ],
-      [
-        "Hindu",
-        21
+        39
       ],
       [
         "minority",
-        21
-      ],
-      [
-        "Chamar",
-        20
+        33
       ],
       [
         "GN",
-        19
+        32
+      ],
+      [
+        "Kushwaha",
+        29
+      ],
+      [
+        "Obc",
+        29
+      ],
+      [
+        "Dusadh",
+        24
+      ],
+      [
+        "Chamar",
+        24
+      ],
+      [
+        "Hindu",
+        22
+      ],
+      [
+        "Koiri",
+        22
+      ],
+      [
+        "Kalwar",
+        22
+      ],
+      [
+        "Bhumihar",
+        21
       ],
       [
         "Kanu",
-        18
+        21
+      ],
+      [
+        "Kurmi",
+        21
       ],
       [
         "Female",
-        18
+        21
       ],
       [
         "O.B.C.",
         18
       ],
       [
-        "Kurmi",
-        17
-      ],
-      [
-        "Kalwar",
-        17
-      ],
-      [
-        "Bhumihar",
-        16
-      ],
-      [
         "GENERAL",
         16
       ],
       [
-        "OBc",
-        14
+        "Paswan",
+        16
       ],
       [
         "EBc",
-        14
+        16
+      ],
+      [
+        "gen",
+        16
+      ],
+      [
+        "OBc",
+        15
       ],
       [
         "Dhanuk",
         13
       ],
       [
-        "Koiri",
+        "Mushar",
         13
       ],
       [
-        "Paswan",
-        13
+        "Miniority",
+        12
+      ],
+      [
+        "Bania",
+        12
       ],
       [
         "Nai",
+        12
+      ],
+      [
+        "Ram",
         11
       ],
       [
-        "Mushar",
+        "Baniya",
         10
       ],
       [
-        "gen",
+        "GEN.",
         10
       ],
       [
@@ -6211,19 +6699,15 @@
         10
       ],
       [
-        "Miniority",
+        "Kayastha",
         9
       ],
       [
-        "Baniya",
+        "Badhai",
         9
       ],
       [
         "S.C.",
-        9
-      ],
-      [
-        "Bania",
         9
       ],
       [
@@ -6239,7 +6723,7 @@
         8
       ],
       [
-        "Kayastha",
+        "Brahman",
         8
       ],
       [
@@ -6251,7 +6735,19 @@
         8
       ],
       [
-        "Badhai",
+        "St",
+        7
+      ],
+      [
+        "Khushwaha",
+        7
+      ],
+      [
+        "general",
+        7
+      ],
+      [
+        "Dhobi",
         7
       ],
       [
@@ -6259,15 +6755,11 @@
         7
       ],
       [
-        "St",
-        6
+        "0BC",
+        7
       ],
       [
-        "Ram",
-        6
-      ],
-      [
-        "Dhobi",
+        "Lohar",
         6
       ],
       [
@@ -6275,7 +6767,23 @@
         6
       ],
       [
+        "Min.",
+        6
+      ],
+      [
+        "Mainority",
+        6
+      ],
+      [
+        "EBC Muslim",
+        6
+      ],
+      [
         "Kumhar",
+        6
+      ],
+      [
+        "Sonar",
         6
       ],
       [
@@ -6283,15 +6791,11 @@
         6
       ],
       [
-        "Brahman",
-        5
-      ],
-      [
         "Prakhand Adhyaksh",
         5
       ],
       [
-        "Lohar",
+        "Barai",
         5
       ],
       [
@@ -6303,7 +6807,11 @@
         5
       ],
       [
-        "0BC",
+        "Brahamin",
+        5
+      ],
+      [
+        "Gneral",
         5
       ],
       [
@@ -6311,19 +6819,11 @@
         5
       ],
       [
-        "GEN.",
-        5
-      ],
-      [
-        "Sonar",
-        5
-      ],
-      [
         "MINORTY",
         4
       ],
       [
-        "Barai",
+        "Atit",
         4
       ],
       [
@@ -6331,11 +6831,11 @@
         4
       ],
       [
-        "Khushwaha",
+        "Prakhand Yuva Adhyaksh",
         4
       ],
       [
-        "Prakhand Yuva Adhyaksh",
+        "Dushad",
         4
       ],
       [
@@ -6347,15 +6847,11 @@
         4
       ],
       [
-        "general",
-        4
-      ],
-      [
-        "Brahamin",
-        4
-      ],
-      [
         "General (Muslim)",
+        4
+      ],
+      [
+        "Minorit",
         4
       ],
       [
@@ -6375,6 +6871,10 @@
         4
       ],
       [
+        "min.",
+        4
+      ],
+      [
         "Noniya",
         4
       ],
@@ -6383,11 +6883,35 @@
         4
       ],
       [
-        "EBC Muslim",
+        "male",
         4
       ],
       [
+        "सामान्य वर्ग",
+        4
+      ],
+      [
+        "Minority (EBC)",
+        4
+      ],
+      [
+        "MInority (EBC)",
+        4
+      ],
+      [
+        "Pan",
+        3
+      ],
+      [
+        "Nuniya",
+        3
+      ],
+      [
         "Sheikh",
+        3
+      ],
+      [
+        "Kuswaha",
         3
       ],
       [
@@ -6395,15 +6919,39 @@
         3
       ],
       [
-        "Gneral",
+        "Genereal",
         3
       ],
       [
-        "Min.",
+        "GEn",
         3
       ],
       [
-        "Mainority",
+        "Minirity",
+        3
+      ],
+      [
+        "Baitha",
+        3
+      ],
+      [
+        "Generaal",
+        3
+      ],
+      [
+        "Minoriy",
+        3
+      ],
+      [
+        "Pasi",
+        3
+      ],
+      [
+        "BC",
+        3
+      ],
+      [
+        "Tatwa",
         3
       ],
       [
@@ -6411,15 +6959,7 @@
         3
       ],
       [
-        "Atit",
-        2
-      ],
-      [
         "Prakhand Karyalay Prabhari",
-        2
-      ],
-      [
-        "Pan",
         2
       ],
       [
@@ -6427,15 +6967,19 @@
         2
       ],
       [
+        "Thakur",
+        2
+      ],
+      [
         "Samri Vaishya",
         2
       ],
       [
-        "Nuniya",
+        "Srivastav",
         2
       ],
       [
-        "Dushad",
+        "General Rajput",
         2
       ],
       [
@@ -6443,15 +6987,15 @@
         2
       ],
       [
-        "Genereal",
+        "Sahani",
         2
       ],
       [
-        "GEn",
+        "Saah",
         2
       ],
       [
-        "Minirity",
+        "Min",
         2
       ],
       [
@@ -6459,15 +7003,27 @@
         2
       ],
       [
+        "Dalit",
+        2
+      ],
+      [
         "muslim",
         2
       ],
       [
-        "Baitha",
+        "badhai",
         2
       ],
       [
-        "Minorit",
+        "Bhraman",
+        2
+      ],
+      [
+        "Goswami",
+        2
+      ],
+      [
+        "Dusad",
         2
       ],
       [
@@ -6475,23 +7031,11 @@
         2
       ],
       [
-        "Generaal",
+        "OBC-2",
         2
       ],
       [
         "Genaral",
-        2
-      ],
-      [
-        "min.",
-        2
-      ],
-      [
-        "Minoriy",
-        2
-      ],
-      [
-        "Pasi",
         2
       ],
       [
@@ -6511,27 +7055,15 @@
         2
       ],
       [
-        "male",
-        2
-      ],
-      [
         "General Muslim",
         2
       ],
       [
-        "सामान्य वर्ग",
+        "Minoritty",
         2
       ],
       [
-        "BC",
-        2
-      ],
-      [
-        "Tatwa",
-        2
-      ],
-      [
-        "Minority (EBC)",
+        "Sharma",
         2
       ],
       [
@@ -6539,11 +7071,55 @@
         2
       ],
       [
+        "Muslim minority",
+        2
+      ],
+      [
+        "Mimority",
+        2
+      ],
+      [
+        "OBC 2",
+        2
+      ],
+      [
+        "oBC",
+        2
+      ],
+      [
+        "Greneral",
+        2
+      ],
+      [
         "Minortiy",
         2
       ],
       [
-        "MInority (EBC)",
+        "Gaderia",
+        2
+      ],
+      [
+        "GEneral",
+        2
+      ],
+      [
+        "TBD",
+        2
+      ],
+      [
+        "Gemeral",
+        2
+      ],
+      [
+        "OBE",
+        2
+      ],
+      [
+        "Nagar",
+        2
+      ],
+      [
+        "EBS",
         2
       ],
       [
@@ -6595,10 +7171,6 @@
         1
       ],
       [
-        "Thakur",
-        1
-      ],
-      [
         "Vaishjya",
         1
       ],
@@ -6608,10 +7180,6 @@
       ],
       [
         "HARI",
-        1
-      ],
-      [
-        "Srivastav",
         1
       ],
       [
@@ -6631,23 +7199,11 @@
         1
       ],
       [
-        "General Rajput",
-        1
-      ],
-      [
-        "Kuswaha",
-        1
-      ],
-      [
         "Prakahand Abhiyan Samiti Sanyojak",
         1
       ],
       [
         "EBC\nsahani",
-        1
-      ],
-      [
-        "Sahani",
         1
       ],
       [
@@ -6659,39 +7215,11 @@
         1
       ],
       [
-        "Saah",
-        1
-      ],
-      [
-        "Min",
-        1
-      ],
-      [
         "Marwari",
         1
       ],
       [
-        "Dalit",
-        1
-      ],
-      [
-        "badhai",
-        1
-      ],
-      [
-        "Bhraman",
-        1
-      ],
-      [
         "st",
-        1
-      ],
-      [
-        "Goswami",
-        1
-      ],
-      [
-        "Dusad",
         1
       ],
       [
@@ -6708,10 +7236,6 @@
       ],
       [
         "GENRAL",
-        1
-      ],
-      [
-        "OBC-2",
         1
       ],
       [
@@ -6791,14 +7315,6 @@
         1
       ],
       [
-        "Minoritty",
-        1
-      ],
-      [
-        "Sharma",
-        1
-      ],
-      [
         "EBC (Muslim)",
         1
       ],
@@ -6808,10 +7324,6 @@
       ],
       [
         "Gedneral",
-        1
-      ],
-      [
-        "Muslim minority",
         1
       ],
       [
@@ -6847,35 +7359,11 @@
         1
       ],
       [
-        "Mimority",
-        1
-      ],
-      [
-        "OBC 2",
-        1
-      ],
-      [
-        "oBC",
-        1
-      ],
-      [
-        "Greneral",
-        1
-      ],
-      [
         "Sikh",
         1
       ],
       [
         "Mushahar",
-        1
-      ],
-      [
-        "Gaderia",
-        1
-      ],
-      [
-        "GEneral",
         1
       ],
       [
@@ -6891,23 +7379,11 @@
         1
       ],
       [
-        "TBD",
-        1
-      ],
-      [
         "Saha",
         1
       ],
       [
-        "Gemeral",
-        1
-      ],
-      [
         "Kahar",
-        1
-      ],
-      [
-        "OBE",
         1
       ],
       [
@@ -6924,14 +7400,6 @@
       ],
       [
         "Amat",
-        1
-      ],
-      [
-        "Nagar",
-        1
-      ],
-      [
-        "EBS",
         1
       ],
       [
@@ -7057,171 +7525,175 @@
       [
         "Mnority",
         1
+      ],
+      [
+        "Narkatiyaganj",
+        1
       ]
     ],
     "gender": {
-      "male": 95983,
-      "female": 7032,
-      "other": 19001
+      "male": 114253,
+      "female": 7904,
+      "other": 26590
     },
     "topDesignations": [
       [
         "BSC Member",
-        88161
+        88164
+      ],
+      [
+        "BSC-Member",
+        12840
       ],
       [
         "DSC Member",
-        8495
+        9782
+      ],
+      [
+        "Member",
+        6979
       ],
       [
         "Prakhand Upadhyaksh",
-        2942
+        2963
       ],
       [
         "Sangathan Zila Upadhyaksh",
-        1525
+        2271
       ],
       [
         "ACC",
         1401
       ],
       [
-        "Prakhand Abhiyan Samiti Member",
-        1274
-      ],
-      [
         "Zila Sachiv",
-        942
+        1394
       ],
       [
         "Zila Upadhyaksh",
-        912
+        1378
+      ],
+      [
+        "Prakhand Abhiyan Samiti Member",
+        1281
       ],
       [
         "Block Prabhari",
-        851
-      ],
-      [
-        "Prakhand Adhyaksh",
-        817
+        1153
       ],
       [
         "Sangathan Zila Sachiv",
-        746
+        1127
+      ],
+      [
+        "Prakhand Adhyaksh",
+        820
       ],
       [
         "Prakhand Mahasachiv",
-        667
+        670
       ],
       [
         "Prakhand Mahila Adhyaksh",
-        642
+        646
       ],
       [
         "Prakhand Mukhya Pravakta",
-        594
+        621
       ],
       [
         "Prakhand Yuva Adhyaksh",
-        589
+        593
       ],
       [
         "Prakhand Kisan Adhyaksh",
-        589
+        592
       ],
       [
-        "Prakhand Mukhay Pravakta",
-        523
+        "State Committee",
+        531
       ],
       [
         "Prakhand Yuva Adhykash",
-        498
-      ],
-      [
-        "Prakhand Abhiyan samiti  Sanyojak",
-        480
-      ],
-      [
-        "Prakhand Abhiyan samiti Sanyojak",
-        434
+        525
       ]
     ],
     "age": {
-      "18-25": 1364,
-      "26-35": 11350,
-      "36-45": 15998,
-      "46-55": 13778,
-      "56-65": 7077,
-      "65+": 2193,
-      "Unknown": 70256
+      "18-25": 2274,
+      "26-35": 17441,
+      "36-45": 23854,
+      "46-55": 19839,
+      "56-65": 9720,
+      "65+": 3014,
+      "Unknown": 72605
     }
   },
   "dataQuality": {
-    "total": 122016,
-    "completeCount": 96555,
-    "partialCount": 25461,
-    "missingContact": 1437,
-    "missingGender": 17343,
+    "total": 148747,
+    "completeCount": 115032,
+    "partialCount": 33715,
+    "missingContact": 3851,
+    "missingGender": 23475,
     "fieldStats": [
       {
         "key": "Name",
-        "filled": 121989,
-        "missing": 27,
+        "filled": 148715,
+        "missing": 32,
         "pct": "100.0"
       },
       {
         "key": "Contact No.",
-        "filled": 120579,
-        "missing": 1437,
-        "pct": "98.8"
+        "filled": 144896,
+        "missing": 3851,
+        "pct": "97.4"
       },
       {
         "key": "District",
-        "filled": 122016,
+        "filled": 148747,
         "missing": 0,
         "pct": "100.0"
       },
       {
         "key": "Block",
-        "filled": 117655,
-        "missing": 4361,
-        "pct": "96.4"
+        "filled": 143036,
+        "missing": 5711,
+        "pct": "96.2"
       },
       {
         "key": "Panchayat",
-        "filled": 18385,
-        "missing": 103631,
-        "pct": "15.1"
+        "filled": 30068,
+        "missing": 118679,
+        "pct": "20.2"
       },
       {
         "key": "Category",
-        "filled": 109709,
-        "missing": 12307,
-        "pct": "89.9"
+        "filled": 134347,
+        "missing": 14400,
+        "pct": "90.3"
       },
       {
         "key": "Caste",
-        "filled": 108355,
-        "missing": 13661,
-        "pct": "88.8"
+        "filled": 133057,
+        "missing": 15690,
+        "pct": "89.5"
       },
       {
         "key": "Gender",
-        "filled": 104673,
-        "missing": 17343,
-        "pct": "85.8"
+        "filled": 125272,
+        "missing": 23475,
+        "pct": "84.2"
       },
       {
         "key": "Current JS Designation Final",
-        "filled": 120421,
-        "missing": 1595,
-        "pct": "98.7"
+        "filled": 147147,
+        "missing": 1600,
+        "pct": "98.9"
       },
       {
         "key": "Age",
-        "filled": 51831,
-        "missing": 70185,
-        "pct": "42.5"
+        "filled": 77376,
+        "missing": 71371,
+        "pct": "52.0"
       }
     ]
   }

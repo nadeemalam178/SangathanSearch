@@ -2,6 +2,12 @@
   "version": 2,
   "cleanUrls": true,
   "trailingSlash": false,
+  "functions": {
+    "api/*.js": {
+      "includeFiles": "data/**",
+      "maxDuration": 15
+    }
+  },
   "headers": [
     {
       "source": "/data/(.*)",
