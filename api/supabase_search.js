@@ -1,11 +1,37 @@
+const fs = require('fs');
+const path = require('path');
 const { createClient } = require('@supabase/supabase-js');
+
+// Load .env file automatically
+try {
+  const envPath = path.resolve(__dirname, '..', '.env');
+  if (fs.existsSync(envPath)) {
+    const lines = fs.readFileSync(envPath, 'utf8').split('\n');
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const idx = trimmed.indexOf('=');
+      if (idx !== -1) {
+        const k = trimmed.slice(0, idx).trim();
+        const v = trimmed.slice(idx + 1).trim();
+        if (!process.env[k]) process.env[k] = v;
+      }
+    }
+  }
+} catch (_) {}
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 let supabase = null;
-if (SUPABASE_URL && SUPABASE_KEY) {
-  supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+function getSupabase() {
+  if (supabase) return supabase;
+  const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (url && key) {
+    supabase = createClient(url, key);
+  }
+  return supabase;
 }
 
 module.exports = async (req, res) => {
@@ -20,7 +46,8 @@ module.exports = async (req, res) => {
     return;
   }
 
-  if (!supabase) {
+  const client = getSupabase();
+  if (!client) {
     const err = { error: 'Supabase credentials not configured. Please set SUPABASE_URL and SUPABASE_ANON_KEY.' };
     if (res.status) res.status(500).json(err);
     else { res.statusCode = 500; res.end(JSON.stringify(err)); }
@@ -40,7 +67,7 @@ module.exports = async (req, res) => {
   const offset = (page - 1) * perPage;
 
   try {
-    let query = supabase.from('members').select('*', { count: 'exact' });
+    let query = client.from('members').select('*', { count: 'exact' });
 
     if (district) query = query.ilike('district', district);
     if (block) query = query.ilike('block', block);

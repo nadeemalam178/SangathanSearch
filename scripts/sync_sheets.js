@@ -16,6 +16,17 @@ async function main() {
 
   try {
     await runExport();
+
+    // If Supabase credentials are configured, sync data into Supabase
+    const uploadSupabaseScript = path.join(__dirname, 'upload_to_supabase.js');
+    if (fs.existsSync(uploadSupabaseScript)) {
+      console.log('\nSyncing fresh dataset to Supabase...');
+      const resSupabase = spawnSync(process.execPath, [uploadSupabaseScript], { stdio: 'inherit' });
+      if (resSupabase.error) {
+        console.warn('Note: Supabase sync warning:', resSupabase.error.message);
+      }
+    }
+
     console.log('\nGenerating SQLite database for instant MCP & search queries...');
     const buildSqliteScript = path.join(__dirname, 'build_sqlite.py');
     if (fs.existsSync(buildSqliteScript)) {

@@ -67,6 +67,12 @@ TO service_role
 USING (true) 
 WITH CHECK (true);
 
+-- Allow anon insert (so bulk upload can run with anon key)
+CREATE POLICY "Allow anon insert" 
+ON public.members FOR INSERT 
+TO anon, authenticated 
+WITH CHECK (true);
+
 -- 5. Stored Procedure for lightning-fast paginated search
 CREATE OR REPLACE FUNCTION public.search_members(
     query_text TEXT DEFAULT '',

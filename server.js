@@ -100,7 +100,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   // Route 4: Supabase Search API
-  if (pathname === '/api/supabase-search') {
+  if (pathname === '/api/supabase-search' || pathname === '/api/supabase_search') {
     const { reqAdapter, resAdapter } = makeAdapter();
     try {
       await supabaseSearchHandler(reqAdapter, resAdapter);

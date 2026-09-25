@@ -3,6 +3,24 @@ const path = require('path');
 const readline = require('readline');
 const { createClient } = require('@supabase/supabase-js');
 
+// Load .env file automatically
+try {
+  const envPath = path.resolve(__dirname, '..', '.env');
+  if (fs.existsSync(envPath)) {
+    const lines = fs.readFileSync(envPath, 'utf8').split('\n');
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const idx = trimmed.indexOf('=');
+      if (idx !== -1) {
+        const k = trimmed.slice(0, idx).trim();
+        const v = trimmed.slice(idx + 1).trim();
+        if (!process.env[k]) process.env[k] = v;
+      }
+    }
+  }
+} catch (_) {}
+
 // Load env or config
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
@@ -62,7 +80,24 @@ async function upload() {
   let batch = [];
   let totalUploaded = 0;
   let totalRows = 0;
-  const BATCH_SIZE = 1000;
+  const seen = new Set();
+  const BATCH_SIZE = 500;
+
+  async function insertBatchWithRetry(items, retries = 3) {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        const { error } = await supabase.from('members').insert(items);
+        if (error) throw error;
+        totalUploaded += items.length;
+        process.stdout.write(`\rUploaded ${totalUploaded.toLocaleString()} unique records to Supabase...`);
+        return;
+      } catch (err) {
+        if (attempt === retries) throw err;
+        console.warn(`\n[Retry ${attempt}/${retries}] Batch insert paused, retrying in 2s... (${err.message})`);
+        await new Promise(r => setTimeout(r, 2000 * attempt));
+      }
+    }
+  }
 
   for await (const line of rl) {
     let quoteCount = 0;
@@ -72,16 +107,34 @@ async function upload() {
 
     if (!inQuotes) {
       if (quoteCount % 2 !== 0) inQuotes = true;
-      else { processRecord(currentRecord); currentRecord = ''; }
+      else {
+        await handleRecord(currentRecord);
+        currentRecord = '';
+      }
     } else {
-      if (quoteCount % 2 !== 0) { inQuotes = false; processRecord(currentRecord); currentRecord = ''; }
+      if (quoteCount % 2 !== 0) {
+        inQuotes = false;
+        await handleRecord(currentRecord);
+        currentRecord = '';
+      }
     }
   }
 
-  function processRecord(recText) {
+  if (currentRecord.trim()) {
+    await handleRecord(currentRecord);
+  }
+
+  if (batch.length > 0) {
+    await insertBatchWithRetry(batch);
+  }
+
+  console.log(`\n\n🎉 Supabase upload complete! Total records uploaded: ${totalUploaded.toLocaleString()}`);
+
+  async function handleRecord(recText) {
     if (!recText.trim()) return;
     if (!header) {
       header = parseLine(recText);
+      console.log('CSV Headers detected:', header);
       return;
     }
 
@@ -90,24 +143,38 @@ async function upload() {
     const row = {};
     header.forEach((h, idx) => { row[h] = (vals[idx] || '').trim(); });
 
+    const name = row['Name'] || '';
+    const father = row["Father/Husband's Name"] || '';
+    const dist = row['District'] || 'Unknown';
+    const block = row['Block'] || '';
+    const pan = row['Panchayat'] || '';
+    const des = row['Current JS Designation Final'] || '';
     let contact = (row['Contact No.'] || '').replace(/\D/g, '');
     if (contact.length === 12 && contact.startsWith('91')) contact = contact.slice(2);
     if (contact.length === 11 && contact.startsWith('0')) contact = contact.slice(1);
     if (contact.length !== 10) contact = (row['Contact No.'] || '').trim();
 
+    // Deduplication matching export_data.js
+    const dedupKey = contact && contact.length === 10
+      ? `${contact}_${name}_${des}`.toLowerCase()
+      : `${name}_${father}_${dist}_${block}_${pan}_${des}`.toLowerCase();
+
+    if (seen.has(dedupKey)) return;
+    seen.add(dedupKey);
+
     batch.push({
-      district: row['District'] || 'Unknown',
-      name: row['Name'] || '',
-      father_name: row["Father/Husband's Name"] || '',
+      district: dist,
+      name: name,
+      father_name: father,
       contact_no: contact,
       anumandal: row['Anumandal'] || '',
-      block: row['Block'] || '',
-      panchayat: row['Panchayat'] || '',
+      block: block,
+      panchayat: pan,
       age: row['Age'] || '',
       category: row['Category'] || '',
       caste: row['Caste'] || '',
       gender: row['Gender'] || '',
-      designation: row['Current JS Designation Final'] || '',
+      designation: des,
       profile: row['Profile'] || '',
       calling_status: row['Calling Status'] || '',
       meeting_status: row['Meeting Status (Baithak)'] || '',
@@ -117,32 +184,14 @@ async function upload() {
     });
 
     if (batch.length >= BATCH_SIZE) {
-      rl.pause();
-      insertBatch([...batch]).then(() => {
-        batch = [];
-        rl.resume();
-      }).catch(err => {
-        console.error('Batch upload error:', err);
-        process.exit(1);
-      });
+      const toSend = batch;
+      batch = [];
+      await insertBatchWithRetry(toSend);
     }
   }
-
-  async function insertBatch(items) {
-    const { error } = await supabase.from('members').insert(items);
-    if (error) throw error;
-    totalUploaded += items.length;
-    console.log(`Uploaded ${totalUploaded} / ${totalRows} records to Supabase...`);
-  }
-
-  if (batch.length > 0) {
-    await insertBatch(batch);
-  }
-
-  console.log(`\n🎉 Supabase upload complete! Total records uploaded: ${totalUploaded}`);
 }
 
 upload().catch(err => {
-  console.error('Upload failed:', err);
+  console.error('\nUpload failed:', err);
   process.exit(1);
 });

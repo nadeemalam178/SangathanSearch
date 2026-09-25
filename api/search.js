@@ -102,7 +102,12 @@ module.exports = async (req, res) => {
 
   const index = loadIndex();
   if (!index) {
-    return res.status(500).json({ error: 'Search index not available' });
+    try {
+      const supabaseSearchHandler = require('./supabase_search.js');
+      return await supabaseSearchHandler(req, res);
+    } catch (_) {
+      return res.status(500).json({ error: 'Search index not available' });
+    }
   }
 
   const rawQ = normalize(query);
