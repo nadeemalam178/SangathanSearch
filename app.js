@@ -1037,7 +1037,7 @@
           <p>Try adjusting your search or filters</p>
         </div>
       `;
-      tableBody.innerHTML = `<tr><td colspan="8">${emptyHtml}</td></tr>`;
+      tableBody.innerHTML = `<tr><td colspan="10">${emptyHtml}</td></tr>`;
       if (cardsContainer) cardsContainer.innerHTML = emptyHtml;
       pagination.innerHTML = '';
       return;
@@ -1053,25 +1053,29 @@
       const isFemale    = row['Gender']?.toLowerCase() === 'female';
       const genderClass = isFemale ? 'cell-gender-female' : 'cell-gender-male';
 
-      // 1. Table row HTML
+      // 1. Table row HTML - exactly 10 columns matching index.html headers
       rows[k] = `<tr data-index="${start + k}">
-        <td class="cell-name">${esc(row['Name'])}</td>
+        <td class="cell-name">${esc(row['Name'] || '—')}</td>
         <td class="cell-contact">${renderContactCell(row['Contact No.'])}</td>
-        <td>${esc(row['District'])}</td>
-        <td>${esc(row['Block'])}</td>
-        <td>${esc(row['Panchayat'])}</td>
+        <td class="cell-district">${esc(row['District'] || '—')}</td>
+        <td>${esc(row['Block'] || '—')}</td>
+        <td>${esc(row['Panchayat'] || '—')}</td>
         <td><span class="badge badge-category ${catClass}">${esc(row['Category'] || '—')}</span></td>
         <td>${esc(row['Caste'] || '—')}</td>
         <td class="${genderClass}">${esc(row['Gender'] || '—')}</td>
-        <td class="cell-designation" title="${esc(row['Current JS Designation Final'])}">${esc(row['Current JS Designation Final'])}</td>
+        <td>${esc(row['Age'] || '—')}</td>
+        <td>${row['Current JS Designation Final'] ? `<span class="cell-designation" title="${esc(row['Current JS Designation Final'])}">${esc(row['Current JS Designation Final'])}</span>` : '—'}</td>
       </tr>`;
 
       // 2. Mobile Card HTML
       const rawContact = (row['Contact No.'] || '').trim();
-      const validPhone = parseContactNumbers(rawContact)[0] || '';
+      const parsedPhones = parseContactNumbers(rawContact);
+      const cleanDigits = rawContact.replace(/\D/g, '');
+      const validPhone = parsedPhones[0] || (cleanDigits.length >= 7 ? cleanDigits : '');
+      const displayPhone = parsedPhones[0] || rawContact;
       const initials = (row['Name'] || 'JS').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase() || 'JS';
 
-      const waBtn = validPhone
+      const waBtn = (validPhone && validPhone.length === 10)
         ? `<a href="https://wa.me/91${validPhone}" target="_blank" rel="noopener" class="card-action-btn card-wa-btn" title="WhatsApp" onclick="event.stopPropagation()">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
             <span>WA</span>
@@ -1084,6 +1088,12 @@
             <span>Call</span>
           </a>`
         : '';
+
+      const detailMeta = [
+        row['Caste'],
+        row['Gender'],
+        row['Age'] ? `${row['Age']} yrs` : ''
+      ].filter(Boolean).join(' · ') || '—';
 
       cards[k] = `<div class="mobile-card" data-index="${start + k}">
         <div class="card-top">
@@ -1108,12 +1118,12 @@
             <span class="card-meta-val">${esc(row['Panchayat'] || '—')}</span>
           </div>
           <div class="card-meta-item">
-            <span class="card-meta-lbl">Caste / Gender</span>
-            <span class="card-meta-val">${esc(row['Caste'] || '—')} · ${esc(row['Gender'] || '—')}</span>
+            <span class="card-meta-lbl">Details</span>
+            <span class="card-meta-val">${esc(detailMeta)}</span>
           </div>
         </div>
         <div class="card-footer">
-          <div class="card-phone">${validPhone ? '📞 ' + validPhone : '<span class="cell-no-contact">No Phone</span>'}</div>
+          <div class="card-phone">${displayPhone ? '📞 ' + esc(displayPhone) : '<span class="cell-no-contact">No Phone</span>'}</div>
           <div class="card-actions">${callBtn}${waBtn}</div>
         </div>
       </div>`;
@@ -1126,13 +1136,26 @@
   }
 
   function renderContactCell(raw) {
-    const phones = parseContactNumbers(raw);
-    if (phones.length === 0) {
+    if (!raw) return '<span class="cell-no-contact">—</span>';
+    const text = String(raw).trim();
+    if (!text || text === '#N/A' || text === '#REF!') {
       return '<span class="cell-no-contact">—</span>';
     }
-    return phones.map(p =>
-      `<a href="tel:${p}" class="phone-link" onclick="event.stopPropagation()">${p}</a>`
-    ).join(', ');
+
+    const phones = parseContactNumbers(text);
+    if (phones.length > 0) {
+      return phones.map(p =>
+        `<a href="tel:${p}" class="phone-link" onclick="event.stopPropagation()">${p}</a>`
+      ).join(', ');
+    }
+
+    // Fallback: If no strict 10-digit number was extracted, but digits exist (e.g. 9-digit numbers)
+    const digits = text.replace(/\D/g, '');
+    if (digits.length >= 7) {
+      return `<a href="tel:${digits}" class="phone-link raw-phone" onclick="event.stopPropagation()">${esc(text)}</a>`;
+    }
+
+    return `<span class="cell-contact-text">${esc(text)}</span>`;
   }
 
   function getCategoryClass(cat) {
@@ -1190,51 +1213,72 @@
     const row = filteredData[index];
     if (!row) return;
 
-    $('#modal-name').textContent    = row['Name'] || 'Unknown';
-    $('#modal-desig').textContent   = row['Current JS Designation Final'] || 'Jan Suraaj Member';
-    $('#modal-category').textContent= row['Category'] || '—';
-    $('#modal-category').className  = `badge badge-category ${getCategoryClass(row['Category'])}`;
+    const modalName = $('#modal-name');
+    if (modalName) modalName.textContent = row['Name'] || 'Unknown';
 
-    const phones = parseContactNumbers(row['Contact No.']);
-    const primaryPhone = phones[0] || '';
-
-    const waBtn = $('#modal-btn-wa');
-    if (waBtn) {
-      if (primaryPhone) {
-        waBtn.href = `https://wa.me/91${primaryPhone}`;
-        waBtn.style.display = 'inline-flex';
-      } else {
-        waBtn.style.display = 'none';
-      }
+    const modalSub = $('#modal-subtitle');
+    if (modalSub) {
+      modalSub.textContent = [
+        row['Current JS Designation Final'],
+        row['District'],
+        row['Block'],
+        row['Panchayat']
+      ].filter(Boolean).join(' · ');
     }
 
-    const callBtn = $('#modal-btn-call');
-    if (callBtn) {
-      if (primaryPhone) {
-        callBtn.href = `tel:${primaryPhone}`;
-        callBtn.style.display = 'inline-flex';
-      } else {
-        callBtn.style.display = 'none';
-      }
-    }
+    const fieldDefs = [
+      { label: 'District',         key: 'District' },
+      { label: 'Anumandal',        key: 'Anumandal' },
+      { label: 'Block',            key: 'Block' },
+      { label: 'Panchayat',        key: 'Panchayat' },
+      { label: "Father / Husband", key: "Father/Husband's Name" },
+      { label: 'Contact No.',      key: 'Contact No.', isPhone: true },
+      { label: 'Age',              key: 'Age' },
+      { label: 'Gender',           key: 'Gender' },
+      { label: 'Category',         key: 'Category' },
+      { label: 'Caste',            key: 'Caste' },
+      { label: 'Designation',      key: 'Current JS Designation Final' },
+      { label: 'Profile',          key: 'Profile', full: true },
+      { label: 'Calling Status',   key: 'Calling Status' },
+      { label: 'Meeting Status',   key: 'Meeting Status (Baithak)' },
+      { label: 'Current Status',   key: 'Current  Status' },
+      { label: 'Remarks',          key: 'Remarks', full: true },
+      { label: 'Reason Inactive',  key: 'Reason For Inactive' }
+    ];
 
-    const fieldsGrid = $('#modal-fields-grid');
-    if (fieldsGrid) {
-      fieldsGrid.innerHTML = COLUMNS.map(col => {
-        let val = row[col] || '—';
-        if (col === 'Contact No.') {
-          val = phones.length > 0
-            ? phones.map(p => `<a href="tel:${p}" class="phone-link">${p}</a>`).join(', ')
-            : '<span class="cell-no-contact">Not Available</span>';
+    const grid = $('#modal-details');
+    if (grid) {
+      grid.innerHTML = fieldDefs.map(f => {
+        const rawVal = (row[f.key] || '').trim();
+        let valHtml = '';
+
+        if (f.isPhone) {
+          if (!rawVal) {
+            valHtml = '<div class="detail-field-value empty">—</div>';
+          } else {
+            const phones = parseContactNumbers(rawVal);
+            if (phones.length > 0) {
+              valHtml = phones.map(p => `
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
+                  <a href="tel:${p}" class="phone-link" style="font-weight:600;">📞 ${p}</a>
+                  <a href="https://wa.me/91${p}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;font-size:0.75rem;padding:2px 8px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);border-radius:4px;color:#4ade80;text-decoration:none;font-weight:600;">💬 WhatsApp</a>
+                </div>
+              `).join('');
+            } else {
+              const digits = rawVal.replace(/\D/g, '');
+              valHtml = digits.length >= 7
+                ? `<a href="tel:${digits}" class="phone-link" style="font-weight:600;">📞 ${esc(rawVal)}</a>`
+                : `<div class="detail-field-value">${esc(rawVal)}</div>`;
+            }
+          }
         } else {
-          val = esc(val);
+          valHtml = rawVal ? `<div class="detail-field-value">${esc(rawVal)}</div>` : '<div class="detail-field-value empty">—</div>';
         }
-        return `
-          <div class="modal-field-item">
-            <div class="modal-field-label">${esc(col)}</div>
-            <div class="modal-field-value">${val}</div>
-          </div>
-        `;
+
+        return `<div class="detail-field ${f.full ? 'full-width' : ''}">
+          <div class="detail-field-label">${f.label}</div>
+          ${valHtml}
+        </div>`;
       }).join('');
     }
 
@@ -1819,7 +1863,7 @@
     if (!body) return;
 
     if (pageData.length === 0) {
-      body.innerHTML = '<tr><td colspan="7" class="empty-state"><div class="empty-icon">✓</div><h3>No records in this view</h3></td></tr>';
+      body.innerHTML = '<tr><td colspan="10" class="empty-state"><div class="empty-icon">✓</div><h3>No records in this view</h3></td></tr>';
       $('#dq-pagination').innerHTML = '';
       return;
     }
@@ -1837,7 +1881,10 @@
         <td>${c('Block', r)}</td>
         <td>${c('Panchayat', r)}</td>
         <td>${c('Category', r)}</td>
+        <td>${c('Caste', r)}</td>
         <td>${c('Gender', r)}</td>
+        <td>${c('Age', r)}</td>
+        <td>${c('Current JS Designation Final', r)}</td>
       </tr>
     `).join('');
 

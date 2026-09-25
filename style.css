@@ -862,6 +862,39 @@ tbody td:first-child {
   color: var(--primary-300) !important;
 }
 
+.cell-contact {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.phone-link {
+  color: var(--primary-400);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.phone-link:hover {
+  color: var(--primary-300);
+  text-decoration: underline;
+}
+
+.phone-link.raw-phone {
+  color: var(--text-secondary);
+  border-bottom: 1px dotted var(--text-muted);
+}
+
+.cell-no-contact {
+  color: var(--text-muted);
+  font-style: italic;
+  opacity: 0.7;
+}
+
+.cell-contact-text {
+  color: var(--text-secondary);
+  font-size: 0.85em;
+}
+
 .cell-designation {
   display: inline-block;
   padding: 2px 10px;

@@ -386,11 +386,9 @@ async function runExport() {
     }
   }
   const publicDataDir = path.join(PUBLIC_DIR, 'data');
-  if (!fs.existsSync(publicDataDir)) {
-    try {
-      fs.cpSync(DATA_DIR, publicDataDir, { recursive: true });
-    } catch (_) {}
-  }
+  try {
+    fs.cpSync(DATA_DIR, publicDataDir, { recursive: true });
+  } catch (_) {}
   console.log(`Synchronized static assets into public directory (${PUBLIC_DIR})`);
 
   console.log('=== EXPORT PIPELINE SUCCESSFUL ===');
