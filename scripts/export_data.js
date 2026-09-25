@@ -375,6 +375,24 @@ async function runExport() {
   fs.writeFileSync(summaryPath, JSON.stringify(summary, null, 2), 'utf8');
   console.log(`Generated summary.json (${(fs.statSync(summaryPath).size / 1024).toFixed(1)} KB)`);
 
+  // 5. Ensure public directory exists for deployment platforms expecting "public" output
+  const PUBLIC_DIR = path.join(ROOT_DIR, 'public');
+  if (!fs.existsSync(PUBLIC_DIR)) fs.mkdirSync(PUBLIC_DIR, { recursive: true });
+  const filesToCopy = ['index.html', 'style.css', 'app.js', 'data.csv', '_headers'];
+  for (const f of filesToCopy) {
+    const src = path.join(ROOT_DIR, f);
+    if (fs.existsSync(src)) {
+      try { fs.copyFileSync(src, path.join(PUBLIC_DIR, f)); } catch (_) {}
+    }
+  }
+  const publicDataDir = path.join(PUBLIC_DIR, 'data');
+  if (!fs.existsSync(publicDataDir)) {
+    try {
+      fs.cpSync(DATA_DIR, publicDataDir, { recursive: true });
+    } catch (_) {}
+  }
+  console.log(`Synchronized static assets into public directory (${PUBLIC_DIR})`);
+
   console.log('=== EXPORT PIPELINE SUCCESSFUL ===');
 }
 
