@@ -9,6 +9,6 @@
     "start": "npx serve -l 3000 ."
   },
   "dependencies": {
-    "@vercel/analytics": "^1.5.0"
+    "@vercel/analytics": "^2.0.1"
   }
 }
