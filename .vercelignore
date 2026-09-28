@@ -1,0 +1,24 @@
+# Version Control & IDE
+.git
+.github
+.vscode
+.agents
+
+# Python scripts & local databases
+*.py
+*.pyc
+__pycache__/
+*.db
+sangathan.db
+Start_Website.bat
+
+# Build & migration directories
+supabase/
+public/
+
+# Environment files
+.env
+.env.example
+
+# Documentation
+README.md

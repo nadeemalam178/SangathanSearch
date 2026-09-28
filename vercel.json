@@ -4,8 +4,17 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "functions": {
-    "api/*.js": {
-      "includeFiles": "data/**",
+    "api/search.js": {
+      "includeFiles": "data/search_index.json",
+      "maxDuration": 15
+    },
+    "api/sheet.js": {
+      "maxDuration": 15
+    },
+    "api/supabase_search.js": {
+      "maxDuration": 15
+    },
+    "api/sync.js": {
       "maxDuration": 15
     }
   },
