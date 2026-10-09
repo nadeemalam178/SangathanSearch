@@ -15,6 +15,10 @@ Start_Website.bat
 # Build & migration directories
 supabase/
 public/
+scripts/
+
+# Raw dataset (not needed for static web deployment)
+data.csv
 
 # Environment files
 .env

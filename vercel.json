@@ -1,6 +1,8 @@
 {
   "version": 2,
   "outputDirectory": ".",
+  "buildCommand": "echo 'Static assets ready'",
+  "ignoreCommand": "git log -1 --pretty=%B | grep -iE 'skip ci|auto-sync' && exit 0 || exit 1",
   "cleanUrls": true,
   "trailingSlash": false,
   "functions": {
