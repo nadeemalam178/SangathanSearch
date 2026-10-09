@@ -8,6 +8,7 @@
     "build": "node scripts/export_data.js",
     "build:db": "python scripts/build_sqlite.py",
     "upload:supabase": "node scripts/upload_to_supabase.js",
+    "prune": "node scripts/prune_vercel_deployments.js",
     "start": "node server.js",
     "dev": "node server.js"
   },
